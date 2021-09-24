@@ -1,0 +1,52 @@
+pod creation : kubectl run nginx --image=nginx --restart=Never
+kubectl get po or pod or pods - get all the pod spaces 
+kubectl log podname  -- logs of the pod
+kubectl log podname -c containername -- logs of the container of the pod
+kubectl describe po podname - complete detailed information about pod (pod ip, port, image, etc)
+kubectl edit po podname -o yaml - u change ur yaml files
+kubectl delete po podname
+kubectl get po -o wide                                  
+NAME    READY   STATUS    RESTARTS   AGE   IP           NODE           NOMINATED NODE   READINESS GATES
+nginx   1/1     Running   0          71s   172.17.0.2   minikube-m03   <none>           <none>
+kubectl create deploy nginx --image=nginx  --port=80 --replicas=2 - create a deployment with replicas
+kubectl get deploy - to get all deployments 
+
+kubectl get deploy -o wide
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES   SELECTOR
+nginx   3/3     3            3           60s   nginx        nginx    app=nginx
+
+kubectl scale deploy nginx --replicas=3  --increase the replicas in the current deployment 
+kubectl describe deploy nginx. - complete detailed information about deployment 
+kubectl edit  deploy nginx -o yaml -- modify ur deploy files
+kubectl delete deploy deployname
+
+kubectl expose deploy nginx --type=NodePort --port=80 - create the sevice for deployment
+
+kubectl get svc      - get all services
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP        40h
+nginx        NodePort    10.99.208.44   <none>        80:32240/TCP   98s
+
+ kubectl get svc -o wide include with selector base
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE    SELECTOR
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP        40h    <none>
+nginx        NodePort    10.99.208.44   <none>        80:32240/TCP   103s   app=nginx
+
+kubectl describe svc nginx. -- get all the seervice with pod port,ip, nodeport,
+Name:                     nginx
+Namespace:                default
+Labels:                   app=nginx
+Annotations:              <none>
+Selector:                 app=nginx
+Type:                     NodePort
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.99.208.44
+IPs:                      10.99.208.44
+Port:                     <unset>  80/TCP
+TargetPort:               80/TCP
+NodePort:                 <unset>  32240/TCP
+Endpoints:                172.17.0.2:80
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
