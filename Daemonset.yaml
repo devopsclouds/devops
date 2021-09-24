@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ngnix-daemon
+  labels:
+    app: ngmix
+spec:
+  selector:
+    matchLabels:
+      app: ngmix
+  template:
+    metadata:
+      name: ngnix-pod
+      labels:
+        app: ngmix
+    spec:
+      containers:
+        - name: ngnix-container
+          image: sushanth53/ngnix_server
+          ports:
+            - containerPort: 80%                                                                                                                                                                                                                          
