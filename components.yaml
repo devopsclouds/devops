@@ -1,0 +1,1966 @@
+Last login: Wed Sep 22 14:47:29 on ttys000
+adabalah@C02FQ8VMMD6M ~ % minikube start
+😄  minikube v1.23.0 on Darwin 11.3.1
+🎉  minikube 1.23.2 is available! Download it: https://github.com/kubernetes/minikube/releases/tag/v1.23.2
+💡  To disable this notice, run: 'minikube config set WantUpdateNotification false'
+
+✨  Automatically selected the docker driver. Other choices: hyperkit, ssh
+👍  Starting control plane node minikube in cluster minikube
+🚜  Pulling base image ...
+💾  Downloading Kubernetes v1.22.1 preload ...
+    > preloaded-images-k8s-v12-v1...: 515.04 MiB / 515.04 MiB  100.00% 3.81 MiB
+    > gcr.io/k8s-minikube/kicbase: 355.82 MiB / 355.82 MiB  100.00% 1.94 MiB p/
+🔥  Creating docker container (CPUs=2, Memory=1987MB) ...
+🐳  Preparing Kubernetes v1.22.1 on Docker 20.10.8 ...
+    ▪ Generating certificates and keys ...
+    ▪ Booting up control plane ...
+    ▪ Configuring RBAC rules ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+adabalah@C02FQ8VMMD6M ~ % minikube add node 
+Error: unknown command "add" for "minikube"
+
+Did you mean this?
+	addons
+
+Run 'minikube --help' for usage.
+adabalah@C02FQ8VMMD6M ~ % minikube node add 
+😄  Adding node m02 to cluster minikube
+❗  Cluster was created without any CNI, adding a node to it might cause broken networking.
+E0922 18:20:39.153941    5121 register.go:141] unexpected first step: ""
+👍  Starting node minikube-m02 in cluster minikube
+E0922 18:20:39.172803    5121 register.go:141] unexpected first step: ""
+🚜  Pulling base image ...
+E0922 18:20:39.366479    5121 register.go:141] unexpected first step: ""
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...\ E0922 18:20:53.897775    5121 register.go:141] unexpected first step: ""
+
+🐳  Preparing Kubernetes v1.22.1 on Docker 20.10.8 ...| E0922 18:21:02.099517    5121 register.go:141] unexpected first step: ""
+
+🔎  Verifying Kubernetes components...
+🏄  Successfully added m02 to minikube!
+adabalah@C02FQ8VMMD6M ~ % minikube node add 
+\😄  Adding node m03 to cluster minikube
+E0922 18:21:06.628126    5275 register.go:141] unexpected first step: ""
+👍  Starting node minikube-m03 in cluster minikube
+E0922 18:21:06.648452    5275 register.go:141] unexpected first step: ""
+🚜  Pulling base image ...
+E0922 18:21:06.855304    5275 register.go:141] unexpected first step: ""
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+❗  This container is having trouble accessing https://k8s.gcr.io
+💡  To pull new external images, you may need to configure a proxy: https://minikube.sigs.k8s.io/docs/reference/networking/proxy/
+E0922 18:21:24.016897    5275 register.go:141] unexpected first step: ""
+🐳  Preparing Kubernetes v1.22.1 on Docker 20.10.8 .../ E0922 18:21:32.589417    5275 register.go:141] unexpected first step: ""
+
+🔎  Verifying Kubernetes components...
+🏄  Successfully added m03 to minikube!
+adabalah@C02FQ8VMMD6M ~ % cd Downloads 
+adabalah@C02FQ8VMMD6M Downloads % ls
+Australia_and_New_Zealand_Banking_Group_Ltd.mobileconfig
+Hanumantha_Adabala.pptx
+MSTeams Diagnostics Log 9_22_2021__1_21_27_PM
+MSTeams Diagnostics Log 9_22_2021__1_21_34_PM
+bobby
+enrollmentProfile-2.mobileconfig
+enrollmentProfile.mobileconfig
+file.txt
+file2.txt
+file3.txt
+git
+helloe.txt
+kube
+kuber.txt
+mdps_profile.php.cer
+sonar
+~$Hanumantha_Adabala.pptx
+adabalah@C02FQ8VMMD6M Downloads % cd kube
+adabalah@C02FQ8VMMD6M kube % ls
+2-job.yaml			job1.yaml
+8-nginx-rolling-update.yaml	kube.md
+Daemonset.yaml			kubernetes
+cronjob.yaml			namespace.yaml
+deploy-mem.yaml			rollcreate.yaml
+deploy.yaml			rollupdate.yaml
+hpa-mem.yaml			verauto.yaml
+hpa.yaml			verdeploy.yaml
+job.yaml
+adabalah@C02FQ8VMMD6M kube % kubectl get po
+'No resources found in default namespace.
+adabalah@C02FQ8VMMD6M kube % kubectl create -f deploy.yaml 
+deployment.apps/ngnix created
+adabalah@C02FQ8VMMD6M kube % cat deploy.yaml 
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: "2021-09-14T09:19:13Z"
+  generation: 1
+  labels:
+    app: ngnix
+  name: ngnix
+  namespace: default
+  resourceVersion: "77486"
+  uid: 3d19adfb-7d1d-48c7-b874-d7679c400c3a
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ngnix
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ngnix
+    spec:
+      containers:
+      - image: sushanth53/ngnix_server
+        imagePullPolicy: Always
+        name: ngnix-server-kn8cc
+        resources:
+          limits:
+            cpu: "100m"
+          requests:
+            cpu: "5m" 
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2021-09-14T09:19:19Z"
+    lastUpdateTime: "2021-09-14T09:19:19Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2021-09-14T09:19:13Z"
+    lastUpdateTime: "2021-09-14T09:19:19Z"
+    message: ReplicaSet "ngnix-5bf8f4f885" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1
+adabalah@C02FQ8VMMD6M kube % kubectl delete -f deploy.yaml
+deployment.apps "ngnix" deleted
+adabalah@C02FQ8VMMD6M kube % minikube status
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+minikube-m02
+type: Worker
+host: Running
+kubelet: Running
+
+minikube-m03
+type: Worker
+host: Running
+kubelet: Running
+
+adabalah@C02FQ8VMMD6M kube % kubectl get po -A            
+NAMESPACE     NAME                               READY   STATUS    RESTARTS       AGE
+kube-system   coredns-78fcd69978-pwhct           1/1     Running   0              3m38s
+kube-system   etcd-minikube                      1/1     Running   0              3m53s
+kube-system   kindnet-4cgzq                      1/1     Running   0              2m4s
+kube-system   kindnet-q7lxj                      1/1     Running   0              2m30s
+kube-system   kindnet-qzbqz                      1/1     Running   0              2m30s
+kube-system   kube-apiserver-minikube            1/1     Running   0              3m50s
+kube-system   kube-controller-manager-minikube   1/1     Running   0              3m50s
+kube-system   kube-proxy-75x7x                   1/1     Running   0              2m36s
+kube-system   kube-proxy-8sx9f                   1/1     Running   0              3m38s
+kube-system   kube-proxy-rn6jb                   1/1     Running   0              2m4s
+kube-system   kube-scheduler-minikube            1/1     Running   0              3m53s
+kube-system   storage-provisioner                1/1     Running   1 (3m7s ago)   3m49s
+adabalah@C02FQ8VMMD6M kube % kubectl get po -n kube-system
+NAME                               READY   STATUS    RESTARTS        AGE
+coredns-78fcd69978-pwhct           1/1     Running   0               4m12s
+etcd-minikube                      1/1     Running   0               4m27s
+kindnet-4cgzq                      1/1     Running   0               2m38s
+kindnet-q7lxj                      1/1     Running   0               3m4s
+kindnet-qzbqz                      1/1     Running   0               3m4s
+kube-apiserver-minikube            1/1     Running   0               4m24s
+kube-controller-manager-minikube   1/1     Running   0               4m24s
+kube-proxy-75x7x                   1/1     Running   0               3m10s
+kube-proxy-8sx9f                   1/1     Running   0               4m12s
+kube-proxy-rn6jb                   1/1     Running   0               2m38s
+kube-scheduler-minikube            1/1     Running   0               4m27s
+storage-provisioner                1/1     Running   1 (3m41s ago)   4m23s
+adabalah@C02FQ8VMMD6M kube % minikube addons list
+|-----------------------------|----------|--------------|-----------------------|
+|         ADDON NAME          | PROFILE  |    STATUS    |      MAINTAINER       |
+|-----------------------------|----------|--------------|-----------------------|
+| ambassador                  | minikube | disabled     | unknown (third-party) |
+| auto-pause                  | minikube | disabled     | google                |
+| csi-hostpath-driver         | minikube | disabled     | kubernetes            |
+| dashboard                   | minikube | disabled     | kubernetes            |
+| default-storageclass        | minikube | enabled ✅   | kubernetes            |
+| efk                         | minikube | disabled     | unknown (third-party) |
+| freshpod                    | minikube | disabled     | google                |
+| gcp-auth                    | minikube | disabled     | google                |
+| gvisor                      | minikube | disabled     | google                |
+| helm-tiller                 | minikube | disabled     | unknown (third-party) |
+| ingress                     | minikube | disabled     | unknown (third-party) |
+| ingress-dns                 | minikube | disabled     | unknown (third-party) |
+| istio                       | minikube | disabled     | unknown (third-party) |
+| istio-provisioner           | minikube | disabled     | unknown (third-party) |
+| kubevirt                    | minikube | disabled     | unknown (third-party) |
+| logviewer                   | minikube | disabled     | google                |
+| metallb                     | minikube | disabled     | unknown (third-party) |
+| metrics-server              | minikube | disabled     | kubernetes            |
+| nvidia-driver-installer     | minikube | disabled     | google                |
+| nvidia-gpu-device-plugin    | minikube | disabled     | unknown (third-party) |
+| olm                         | minikube | disabled     | unknown (third-party) |
+| pod-security-policy         | minikube | disabled     | unknown (third-party) |
+| portainer                   | minikube | disabled     | portainer.io          |
+| registry                    | minikube | disabled     | google                |
+| registry-aliases            | minikube | disabled     | unknown (third-party) |
+| registry-creds              | minikube | disabled     | unknown (third-party) |
+| storage-provisioner         | minikube | enabled ✅   | kubernetes            |
+| storage-provisioner-gluster | minikube | disabled     | unknown (third-party) |
+| volumesnapshots             | minikube | disabled     | kubernetes            |
+|-----------------------------|----------|--------------|-----------------------|
+adabalah@C02FQ8VMMD6M kube % minikube addons enable metrics-server
+    ▪ Using image k8s.gcr.io/metrics-server/metrics-server:v0.4.2
+adabalah@C02FQ8VMMD6M kube % kubectl get po -n kube-system        
+NAME                               READY   STATUS              RESTARTS        AGE
+coredns-78fcd69978-pwhct           1/1     Running             0               5m44s
+etcd-minikube                      1/1     Running             0               5m59s
+kindnet-4cgzq                      1/1     Running             0               4m10s
+kindnet-q7lxj                      1/1     Running             0               4m36s
+kindnet-qzbqz                      1/1     Running             0               4m36s
+kube-apiserver-minikube            1/1     Running             0               5m56s
+kube-controller-manager-minikube   1/1     Running             0               5m56s
+kube-proxy-75x7x                   1/1     Running             0               4m42s
+kube-proxy-8sx9f                   1/1     Running             0               5m44s
+kube-proxy-rn6jb                   1/1     Running             0               4m10s
+kube-scheduler-minikube            1/1     Running             0               5m59s
+metrics-server-77c99ccb96-vbdqk    0/1     ContainerCreating   0               4s
+storage-provisioner                1/1     Running             1 (5m13s ago)   5m55s
+adabalah@C02FQ8VMMD6M kube % kubectl get po -n kube-system
+NAME                               READY   STATUS    RESTARTS        AGE
+coredns-78fcd69978-pwhct           1/1     Running   0               5m52s
+etcd-minikube                      1/1     Running   0               6m7s
+kindnet-4cgzq                      1/1     Running   0               4m18s
+kindnet-q7lxj                      1/1     Running   0               4m44s
+kindnet-qzbqz                      1/1     Running   0               4m44s
+kube-apiserver-minikube            1/1     Running   0               6m4s
+kube-controller-manager-minikube   1/1     Running   0               6m4s
+kube-proxy-75x7x                   1/1     Running   0               4m50s
+kube-proxy-8sx9f                   1/1     Running   0               5m52s
+kube-proxy-rn6jb                   1/1     Running   0               4m18s
+kube-scheduler-minikube            1/1     Running   0               6m7s
+metrics-server-77c99ccb96-vbdqk    1/1     Running   0               12s
+storage-provisioner                1/1     Running   1 (5m21s ago)   6m3s
+adabalah@C02FQ8VMMD6M kube % kubectl edit po kube-apiserver-minikube -o yaml
+Error from server (NotFound): pods "kube-apiserver-minikube" not found
+adabalah@C02FQ8VMMD6M kube % kubectl edit po kube-apiserver-minikube -o yaml -n kube-system
+Edit cancelled, no changes made.
+adabalah@C02FQ8VMMD6M kube % history
+ 1006  ls
+ 1007  cd kube
+ 1008  ls
+ 1009  kubectl get po
+ 1010  kubectl create -f deploy.yaml
+ 1011  cat deploy.yaml
+ 1012  kubectl delete -f deploy.yaml
+ 1013  minikube status
+ 1014  kubectl get po -A
+ 1015  kubectl get po -n kube-system
+ 1016  minikube addons list
+ 1017  minikube addons enable metrics-server
+ 1018  kubectl get po -n kube-system
+ 1019  kubectl get po -n kube-system
+ 1020  kubectl edit po kube-apiserver-minikube -o yaml
+ 1021  kubectl edit po kube-apiserver-minikube -o yaml -n kube-system
+adabalah@C02FQ8VMMD6M kube % hostname
+C02FQ8VMMD6M
+adabalah@C02FQ8VMMD6M kube % brew search
+Usage: brew search, -S [options] text|/regex/ [...]
+
+Perform a substring search of cask tokens and formula names for text. If
+text is flanked by slashes, it is interpreted as a regular expression. The
+search for text is extended online to homebrew/core and homebrew/cask.
+
+      --formula, --formulae        Search online and locally for formulae.
+      --cask, --casks              Search online and locally for casks.
+      --desc                       Search for formulae with a description
+                                   matching text and casks with a name
+                                   matching text.
+      --pull-request               Search for GitHub pull requests containing
+                                   text.
+      --open                       Search for only open GitHub pull requests.
+      --closed                     Search for only closed GitHub pull
+                                   requests.
+      --repology                   Search for text in the given database.
+      --macports                   Search for text in the given database.
+      --fink                       Search for text in the given database.
+      --opensuse                   Search for text in the given database.
+      --fedora                     Search for text in the given database.
+      --debian                     Search for text in the given database.
+      --ubuntu                     Search for text in the given database.
+  -d, --debug                      Display any debugging information.
+  -q, --quiet                      Make some output more quiet.
+  -v, --verbose                    Make some output more verbose.
+  -h, --help                       Show this message.
+
+Error: Invalid usage: This command requires at least 1 text or regex argument.
+adabalah@C02FQ8VMMD6M kube % brew search nfs
+==> Formulae
+docker-machine-nfs                                 libnfs                                             openfst                                            nss                                                ngs
+adabalah@C02FQ8VMMD6M kube % cat job.yaml 
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: helloworld
+spec:
+  template:
+    spec:
+      containers:
+        - name: busybox
+          image: busybox
+          command: ["ls", "/ram"]
+
+      restartPolicy: Never%                                                                                                                                                                                                                                   adabalah@C02FQ8VMMD6M kube % vi job1.yaml 
+adabalah@C02FQ8VMMD6M kube % vi job.yaml 
+adabalah@C02FQ8VMMD6M kube % cat kube.md 
+how to delete jobs in kubernetes after completion using feature gate
+open  the kube-apiserver and kube controller yaml files under /etc/kubernetes/manifests
+add this line - --feature-gates=TTLAfterFinished=true
+open the job yaml file ttlSecondsAfterFinished add this job spec configuration ---- it means whenever the job is completed after 20 seconds the job will terminated
+
+
+
+horiziontal pod autoscaler
+
+
+
+https://www.datadoghq.com/blog/how-to-collect-and-graph-kubernetes-metrics/
+
+
+
+
+---
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: v1beta1.metrics.k8s.io
+spec:
+  group: metrics.k8s.io
+  groupPriorityMinimum: 100
+  insecureSkipTLSVerify: true
+  service:
+    name: metrics-server
+    namespace: kube-systemKUBECTs
+  version: v1beta1
+  versionPriority: 100
+adabalah@C02FQ8VMMD6M kube % kubectl get po -n kube-system
+NAME                               READY   STATUS    RESTARTS      AGE
+coredns-78fcd69978-pwhct           1/1     Running   0             22h
+etcd-minikube                      1/1     Running   0             22h
+kindnet-4cgzq                      1/1     Running   0             22h
+kindnet-q7lxj                      1/1     Running   0             22h
+kindnet-qzbqz                      1/1     Running   0             22h
+kube-apiserver-minikube            1/1     Running   0             22h
+kube-controller-manager-minikube   1/1     Running   0             22h
+kube-proxy-75x7x                   1/1     Running   0             22h
+kube-proxy-8sx9f                   1/1     Running   0             22h
+kube-proxy-rn6jb                   1/1     Running   0             22h
+kube-scheduler-minikube            1/1     Running   0             22h
+metrics-server-5d56ccdd76-mmp4g    1/1     Running   0             21h
+storage-provisioner                1/1     Running   1 (22h ago)   22h
+adabalah@C02FQ8VMMD6M kube % kubectl edit po kube-apiserver-minikube -o yaml -n kube-system
+error: pods "kube-apiserver-minikube" is invalid
+A copy of your changes has been stored to "/var/folders/sh/62_70dd57s958vr1lly3xt2m0000gn/T/kubectl-edit-103597412.yaml"
+error: Edit cancelled, no valid changes were saved.
+adabalah@C02FQ8VMMD6M kube % kubectl edit po kube-apiserver-minikube -o yaml -n kube-system
+error: pods "kube-apiserver-minikube" is invalid
+A copy of your changes has been stored to "/var/folders/sh/62_70dd57s958vr1lly3xt2m0000gn/T/kubectl-edit-3028774410.yaml"
+error: Edit cancelled, no valid changes were saved.
+adabalah@C02FQ8VMMD6M kube % kubectl edit po kube-apiserver-minikube -o yaml -n kube-system
+error: pods "kube-apiserver-minikube" is invalid
+A copy of your changes has been stored to "/var/folders/sh/62_70dd57s958vr1lly3xt2m0000gn/T/kubectl-edit-1628761912.yaml"
+error: Edit cancelled, no valid changes were saved.
+adabalah@C02FQ8VMMD6M kube % cd ~
+adabalah@C02FQ8VMMD6M ~ % cd .kube 
+adabalah@C02FQ8VMMD6M .kube % ls
+cache	config
+adabalah@C02FQ8VMMD6M .kube % cd config 
+cd: not a directory: config
+adabalah@C02FQ8VMMD6M .kube % cd cache 
+adabalah@C02FQ8VMMD6M cache % ls
+discovery	http
+adabalah@C02FQ8VMMD6M cache % cd ~
+adabalah@C02FQ8VMMD6M ~ % cd kube
+cd: no such file or directory: kube
+adabalah@C02FQ8VMMD6M ~ % cd Downloads/kube
+adabalah@C02FQ8VMMD6M kube % ls
+2-job.yaml			components.yaml			deploy.yaml			job.yaml			kubernetes			rollupdate.yaml
+8-nginx-rolling-update.yaml	cronjob.yaml			hpa-mem.yaml			job1.yaml			namespace.yaml			verauto.yaml
+Daemonset.yaml			deploy-mem.yaml			hpa.yaml			kube.md				rollcreate.yaml			verdeploy.yaml
+adabalah@C02FQ8VMMD6M kube % kubectl get deploy -n kube-sysytem                            
+No resources found in kube-sysytem namespace.
+adabalah@C02FQ8VMMD6M kube % kubectl get deploy                
+No resources found in default namespace.
+adabalah@C02FQ8VMMD6M kube % kubectl get deployment 
+No resources found in default namespace.
+adabalah@C02FQ8VMMD6M kube % kubectl get deploy -n kube-system 
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+coredns          1/1     1            1           22h
+metrics-server   1/1     1            1           21h
+adabalah@C02FQ8VMMD6M kube % kubectl edit deploy coredns -o yaml -n kube-system
+Edit cancelled, no changes made.
+adabalah@C02FQ8VMMD6M kube % kubectl get deploy -A                            
+NAMESPACE              NAME                        READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system            coredns                     1/1     1            1           22h
+kube-system            metrics-server              1/1     1            1           21h
+kubernetes-dashboard   dashboard-metrics-scraper   1/1     1            1           22h
+kubernetes-dashboard   kubernetes-dashboard        1/1     1            1           22h
+adabalah@C02FQ8VMMD6M kube % kubectl get deploy -n kube-system                 
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+coredns          1/1     1            1           22h
+metrics-server   1/1     1            1           21h
+adabalah@C02FQ8VMMD6M kube % minikube stop
+✋  Stopping node "minikube"  ...
+🛑  Powering off "minikube" via SSH ...
+✋  Stopping node "minikube-m02"  ...
+🛑  Powering off "minikube-m02" via SSH ...
+✋  Stopping node "minikube-m03"  ...
+🛑  Powering off "minikube-m03" via SSH ...
+🛑  3 nodes stopped.
+adabalah@C02FQ8VMMD6M kube % kubectl edit deploy coredns -o yaml -n kube-system
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+adabalah@C02FQ8VMMD6M kube % minikube start
+😄  minikube v1.23.0 on Darwin 11.3.1
+✨  Using the docker driver based on existing profile
+👍  Starting control plane node minikube in cluster minikube
+🚜  Pulling base image ...
+🔄  Restarting existing docker container for "minikube" ...
+🐳  Preparing Kubernetes v1.22.1 on Docker 20.10.8 ...
+🔗  Configuring CNI (Container Networking Interface) ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image kubernetesui/dashboard:v2.1.0
+    ▪ Using image kubernetesui/metrics-scraper:v1.0.4
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass, dashboard
+👍  Starting node minikube-m02 in cluster minikube
+🚜  Pulling base image ...
+🔄  Restarting existing docker container for "minikube-m02" ...
+🌐  Found network options:
+    ▪ NO_PROXY=192.168.49.2
+🐳  Preparing Kubernetes v1.22.1 on Docker 20.10.8 ...
+    ▪ env NO_PROXY=192.168.49.2
+🔎  Verifying Kubernetes components...
+👍  Starting node minikube-m03 in cluster minikube
+🚜  Pulling base image ...
+🔄  Restarting existing docker container for "minikube-m03" ...
+🌐  Found network options:
+    ▪ NO_PROXY=192.168.49.2,192.168.49.3
+🐳  Preparing Kubernetes v1.22.1 on Docker 20.10.8 ...
+    ▪ env NO_PROXY=192.168.49.2
+    ▪ env NO_PROXY=192.168.49.2,192.168.49.3
+🔎  Verifying Kubernetes components...
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+adabalah@C02FQ8VMMD6M kube % kubectl edit po kube-apiserver-minikube -o yaml -n kube-system
+Edit cancelled, no changes made.
+adabalah@C02FQ8VMMD6M kube % mount                                                         
+/dev/disk1s1s1 on / (apfs, sealed, local, read-only, journaled)
+devfs on /dev (devfs, local, nobrowse)
+/dev/disk1s5 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk1s3 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+/dev/disk1s6 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+/dev/disk1s2 on /System/Volumes/Data (apfs, local, journaled, nobrowse)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+adabalah@C02FQ8VMMD6M kube % nfs
+zsh: command not found: nfs
+adabalah@C02FQ8VMMD6M kube % nfs-utils
+zsh: command not found: nfs-utils
+adabalah@C02FQ8VMMD6M kube % vi init.yaml
+adabalah@C02FQ8VMMD6M kube % kubectl apply -f init.yaml 
+pod/myapp-pod created
+adabalah@C02FQ8VMMD6M kube % kubectl get po
+NAME        READY   STATUS     RESTARTS   AGE
+myapp-pod   0/1     Init:0/2   0          7s
+adabalah@C02FQ8VMMD6M kube % watch kubectl get po
+adabalah@C02FQ8VMMD6M kube % kubectl describe -f myapp.yaml
+
+adabalah@C02FQ8VMMD6M kube % kubectl describe -f init.yaml 
+Name:         myapp-pod
+Namespace:    default
+Priority:     0
+Node:         minikube-m03/192.168.49.4
+Start Time:   Thu, 23 Sep 2021 19:01:54 +0530
+Labels:       app=myapp
+Annotations:  <none>
+Status:       Pending
+IP:           172.17.0.2
+IPs:
+  IP:  172.17.0.2
+Init Containers:
+  init-myservice:
+    Container ID:  docker://21c3f9e27f0d5bd3ae7ea99bbd810cc9b19897495e57b91fbf529d29a306f04a
+    Image:         busybox:1.28
+    Image ID:      docker-pullable://busybox@sha256:141c253bc4c3fd0a201d32dc1f493bcf3fff003b6df416dea4f41046e0f37d47
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done
+    State:          Running
+      Started:      Thu, 23 Sep 2021 19:02:04 +0530
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+  init-mydb:
+    Container ID:  
+    Image:         busybox:1.28
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+Containers:
+  myapp-container:
+    Container ID:  
+    Image:         busybox:1.28
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      echo The app is running! && sleep 3600
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+Conditions:
+  Type              Status
+  Initialized       False 
+  Ready             False 
+  ContainersReady   False 
+  PodScheduled      True 
+Volumes:
+  kube-api-access-v4zx9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  2m7s  default-scheduler  Successfully assigned default/myapp-pod to minikube-m03
+  Normal  Pulling    2m7s  kubelet            Pulling image "busybox:1.28"
+  Normal  Pulled     117s  kubelet            Successfully pulled image "busybox:1.28" in 9.3043044s
+  Normal  Created    117s  kubelet            Created container init-myservice
+  Normal  Started    117s  kubelet            Started container init-myservice
+adabalah@C02FQ8VMMD6M kube % cat init.yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp-container
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+  initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+  - name: init-mydb
+    image: busybox:1.28
+    command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
+adabalah@C02FQ8VMMD6M kube % kubectl describe -f init.yaml
+Name:         myapp-pod
+Namespace:    default
+Priority:     0
+Node:         minikube-m03/192.168.49.4
+Start Time:   Thu, 23 Sep 2021 19:01:54 +0530
+Labels:       app=myapp
+Annotations:  <none>
+Status:       Pending
+IP:           172.17.0.2
+IPs:
+  IP:  172.17.0.2
+Init Containers:
+  init-myservice:
+    Container ID:  docker://21c3f9e27f0d5bd3ae7ea99bbd810cc9b19897495e57b91fbf529d29a306f04a
+    Image:         busybox:1.28
+    Image ID:      docker-pullable://busybox@sha256:141c253bc4c3fd0a201d32dc1f493bcf3fff003b6df416dea4f41046e0f37d47
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done
+    State:          Running
+      Started:      Thu, 23 Sep 2021 19:02:04 +0530
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+  init-mydb:
+    Container ID:  
+    Image:         busybox:1.28
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+Containers:
+  myapp-container:
+    Container ID:  
+    Image:         busybox:1.28
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      echo The app is running! && sleep 3600
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+Conditions:
+  Type              Status
+  Initialized       False 
+  Ready             False 
+  ContainersReady   False 
+  PodScheduled      True 
+Volumes:
+  kube-api-access-v4zx9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age    From               Message
+  ----    ------     ----   ----               -------
+  Normal  Scheduled  3m1s   default-scheduler  Successfully assigned default/myapp-pod to minikube-m03
+  Normal  Pulling    3m1s   kubelet            Pulling image "busybox:1.28"
+  Normal  Pulled     2m51s  kubelet            Successfully pulled image "busybox:1.28" in 9.3043044s
+  Normal  Created    2m51s  kubelet            Created container init-myservice
+  Normal  Started    2m51s  kubelet            Started container init-myservice
+adabalah@C02FQ8VMMD6M kube % kubectl logs myapp-pod -c init-myservice
+Server:    10.96.0.10
+nslookup: can't resolve 'myservice.default.svc.cluster.local'
+Address 1: 10.96.0.10
+
+waiting for myservice
+Server:    10.96.0.10
+nslookup: can't resolve 'myservice.default.svc.cluster.local'
+Address 1: 10.96.0.10
+
+waiting for myservice
+nslookup: can't resolve 'myservice.default.svc.cluster.local'
+Server:    10.96.0.10
+Address 1: 10.96.0.10
+
+waiting for myservice
+Server:    10.96.0.10
+Address 1: 10.96.0.10
+
+nslookup: can't resolve 'myservice.default.svc.cluster.local'
+waiting for myservice
+adabalah@C02FQ8VMMD6M kube % kubectl get -f init.yaml                
+NAME        READY   STATUS     RESTARTS   AGE
+myapp-pod   0/1     Init:0/2   0          5m54s
+adabalah@C02FQ8VMMD6M kube % kubectl get -f init.yaml
+NAME        READY   STATUS     RESTARTS   AGE
+myapp-pod   0/1     Init:0/2   0          5m59s
+adabalah@C02FQ8VMMD6M kube % kubectl describe -f init.yaml
+Name:         myapp-pod
+Namespace:    default
+Priority:     0
+Node:         minikube-m03/192.168.49.4
+Start Time:   Thu, 23 Sep 2021 19:01:54 +0530
+Labels:       app=myapp
+Annotations:  <none>
+Status:       Pending
+IP:           172.17.0.2
+IPs:
+  IP:  172.17.0.2
+Init Containers:
+  init-myservice:
+    Container ID:  docker://21c3f9e27f0d5bd3ae7ea99bbd810cc9b19897495e57b91fbf529d29a306f04a
+    Image:         busybox:1.28
+    Image ID:      docker-pullable://busybox@sha256:141c253bc4c3fd0a201d32dc1f493bcf3fff003b6df416dea4f41046e0f37d47
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done
+    State:          Running
+      Started:      Thu, 23 Sep 2021 19:02:04 +0530
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+  init-mydb:
+    Container ID:  
+    Image:         busybox:1.28
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+Containers:
+  myapp-container:
+    Container ID:  
+    Image:         busybox:1.28
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      echo The app is running! && sleep 3600
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+Conditions:
+  Type              Status
+  Initialized       False 
+  Ready             False 
+  ContainersReady   False 
+  PodScheduled      True 
+Volumes:
+  kube-api-access-v4zx9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age    From               Message
+  ----    ------     ----   ----               -------
+  Normal  Scheduled  6m16s  default-scheduler  Successfully assigned default/myapp-pod to minikube-m03
+  Normal  Pulling    6m16s  kubelet            Pulling image "busybox:1.28"
+  Normal  Pulled     6m6s   kubelet            Successfully pulled image "busybox:1.28" in 9.3043044s
+  Normal  Created    6m6s   kubelet            Created container init-myservice
+  Normal  Started    6m6s   kubelet            Started container init-myservice
+adabalah@C02FQ8VMMD6M kube % kubectl describe -f init.yaml
+Name:         myapp-pod
+Namespace:    default
+Priority:     0
+Node:         minikube-m03/192.168.49.4
+Start Time:   Thu, 23 Sep 2021 19:01:54 +0530
+Labels:       app=myapp
+Annotations:  <none>
+Status:       Pending
+IP:           172.17.0.2
+IPs:
+  IP:  172.17.0.2
+Init Containers:
+  init-myservice:
+    Container ID:  docker://21c3f9e27f0d5bd3ae7ea99bbd810cc9b19897495e57b91fbf529d29a306f04a
+    Image:         busybox:1.28
+    Image ID:      docker-pullable://busybox@sha256:141c253bc4c3fd0a201d32dc1f493bcf3fff003b6df416dea4f41046e0f37d47
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done
+    State:          Running
+      Started:      Thu, 23 Sep 2021 19:02:04 +0530
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+  init-mydb:
+    Container ID:  
+    Image:         busybox:1.28
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+Containers:
+  myapp-container:
+    Container ID:  
+    Image:         busybox:1.28
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      echo The app is running! && sleep 3600
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-v4zx9 (ro)
+Conditions:
+  Type              Status
+  Initialized       False 
+  Ready             False 
+  ContainersReady   False 
+  PodScheduled      True 
+Volumes:
+  kube-api-access-v4zx9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age    From               Message
+  ----    ------     ----   ----               -------
+  Normal  Scheduled  6m46s  default-scheduler  Successfully assigned default/myapp-pod to minikube-m03
+  Normal  Pulling    6m46s  kubelet            Pulling image "busybox:1.28"
+  Normal  Pulled     6m36s  kubelet            Successfully pulled image "busybox:1.28" in 9.3043044s
+  Normal  Created    6m36s  kubelet            Created container init-myservice
+  Normal  Started    6m36s  kubelet            Started container init-myservice
+adabalah@C02FQ8VMMD6M kube % kubectl get -f init.yaml     
+NAME        READY   STATUS     RESTARTS   AGE
+myapp-pod   0/1     Init:0/2   0          6m51s
+adabalah@C02FQ8VMMD6M kube % kubectl get -f init.yaml     
+NAME        READY   STATUS     RESTARTS   AGE
+myapp-pod   0/1     Init:0/2   0          7m
+adabalah@C02FQ8VMMD6M kube % cat init.yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp-container
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+  initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+  - name: init-mydb
+    image: busybox:1.28
+    command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
+adabalah@C02FQ8VMMD6M kube % kubectl get all -o wide 
+NAME            READY   STATUS     RESTARTS   AGE   IP           NODE           NOMINATED NODE   READINESS GATES
+pod/myapp-pod   0/1     Init:0/2   0          11m   172.17.0.2   minikube-m03   <none>           <none>
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE   SELECTOR
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   24h   <none>
+adabalah@C02FQ8VMMD6M kube % watch kubectl get all -o wide
+adabalah@C02FQ8VMMD6M kube % cd kubernetes 
+adabalah@C02FQ8VMMD6M kubernetes % ls
+README.md		dashboard		kubeadm-external-etcd	kubespray-vagrant-env	misc			vagrant-provisioning
+autoscaler		docs			kubeadm-ha-multi-master	lxd-provisioning	rancher			yamls
+adabalah@C02FQ8VMMD6M kubernetes % cd yamls 
+adabalah@C02FQ8VMMD6M yamls % ls
+1-nginx-daemonset.yaml			12-podpreset-3.yaml			4-pv-nfs.yaml				6-configmap-2.yaml			7-quota-limitrange.yaml			istio-demo
+1-nginx-deployment.yaml			2-cronjob.yaml				4-pvc-hostpath.yaml			6-pod-configmap-env.yaml		7-quota-mem.yaml			misc
+1-nginx-pod.yaml			2-job.yaml				4-pvc-nfs.yaml				6-pod-configmap-mysql-volume.yaml	9-sts-nginx.yaml			mongodb
+1-nginx-replicaset.yaml			3-init-container.yaml			5-pod-secret-env.yaml			6-pod-configmap-volume.yaml		9-sts-pv.yaml				nfs-provisioner
+11-pdb.yaml				4-busybox-pv-hostpath.yaml		5-pod-secret-volume.yaml		7-pod-quota-mem-exceed.yaml		cert-manager-demo
+12-podpreset-1.yaml			4-nfs-nginx.yaml			5-secrets.yaml				7-pod-quota-mem.yaml			glusterfs-provisioner
+12-podpreset-2.yaml			4-pv-hostpath.yaml			6-configmap-1.yaml			7-quota-count.yaml			ingress-demo
+adabalah@C02FQ8VMMD6M yamls % cp 3-init-container.yaml ../../
+adabalah@C02FQ8VMMD6M yamls % cd ../../
+adabalah@C02FQ8VMMD6M kube % la
+zsh: command not found: la
+adabalah@C02FQ8VMMD6M kube % ls
+2-job.yaml			Daemonset.yaml			deploy-mem.yaml			hpa.yaml			job1.yaml			namespace.yaml			verauto.yaml
+3-init-container.yaml		components.yaml			deploy.yaml			init.yaml			kube.md				rollcreate.yaml			verdeploy.yaml
+8-nginx-rolling-update.yaml	cronjob.yaml			hpa-mem.yaml			job.yaml			kubernetes			rollupdate.yaml
+adabalah@C02FQ8VMMD6M kube % cat 3-init-container.yaml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+
+    spec:
+
+      volumes:
+      - name: shared-volume
+        emptyDir: {}
+
+      initContainers:
+      - name: busybox
+        image: busybox
+        volumeMounts:
+        - name: shared-volume
+          mountPath: /nginx-data
+        command: ["/bin/sh"]
+        args: ["-c", "echo '<h1>Hello Kubernetes</h1>' > /nginx-data/index.html"]
+
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: shared-volume
+          mountPath: /usr/share/nginx/html
+adabalah@C02FQ8VMMD6M kube % kubcetl delete -f init.yaml 
+zsh: command not found: kubcetl
+adabalah@C02FQ8VMMD6M kube % kubectl delete -f init.yaml
+pod "myapp-pod" deleted
+^C
+adabalah@C02FQ8VMMD6M kube % kubectl get po
+NAME        READY   STATUS        RESTARTS   AGE
+myapp-pod   0/1     Terminating   0          19m
+adabalah@C02FQ8VMMD6M kube % kubectl apply -f 3-init-container.yaml 
+deployment.apps/nginx-deploy created
+adabalah@C02FQ8VMMD6M kube % kubectl get po
+NAME                            READY   STATUS              RESTARTS   AGE
+nginx-deploy-6d8644b8f9-ct9tm   0/1     Init:ErrImagePull   0          7s
+adabalah@C02FQ8VMMD6M kube % kubectl get po
+NAME                            READY   STATUS              RESTARTS   AGE
+nginx-deploy-6d8644b8f9-ct9tm   0/1     Init:ErrImagePull   0          10s
+adabalah@C02FQ8VMMD6M kube % kubectl get po
+NAME                            READY   STATUS              RESTARTS   AGE
+nginx-deploy-6d8644b8f9-ct9tm   0/1     Init:ErrImagePull   0          11s
+adabalah@C02FQ8VMMD6M kube % kubectl get po
+NAME                            READY   STATUS              RESTARTS   AGE
+nginx-deploy-6d8644b8f9-ct9tm   0/1     Init:ErrImagePull   0          13s
+adabalah@C02FQ8VMMD6M kube % kubectl get po
+NAME                            READY   STATUS              RESTARTS   AGE
+nginx-deploy-6d8644b8f9-ct9tm   0/1     Init:ErrImagePull   0          14s
+adabalah@C02FQ8VMMD6M kube % kubectl get po
+NAME                            READY   STATUS                  RESTARTS   AGE
+nginx-deploy-6d8644b8f9-ct9tm   0/1     Init:ImagePullBackOff   0          18s
+adabalah@C02FQ8VMMD6M kube % kubectl get po
+NAME                            READY   STATUS                  RESTARTS   AGE
+nginx-deploy-6d8644b8f9-ct9tm   0/1     Init:ImagePullBackOff   0          20s
+adabalah@C02FQ8VMMD6M kube % watch kubectl get all -o wide
+adabalah@C02FQ8VMMD6M kube % kubectl get -f 3-init-container.yaml 
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deploy   0/1     1            0           2m30s
+adabalah@C02FQ8VMMD6M kube % kubectl describe -f 3-init-container.yaml
+Name:                   nginx-deploy
+Namespace:              default
+CreationTimestamp:      Thu, 23 Sep 2021 19:24:04 +0530
+Labels:                 run=nginx
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               run=nginx
+Replicas:               1 desired | 1 updated | 1 total | 0 available | 1 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  run=nginx
+  Init Containers:
+   busybox:
+    Image:      busybox
+    Port:       <none>
+    Host Port:  <none>
+    Command:
+      /bin/sh
+    Args:
+      -c
+      echo '<h1>Hello Kubernetes</h1>' > /nginx-data/index.html
+    Environment:  <none>
+    Mounts:
+      /nginx-data from shared-volume (rw)
+  Containers:
+   nginx:
+    Image:        nginx
+    Port:         <none>
+    Host Port:    <none>
+    Environment:  <none>
+    Mounts:
+      /usr/share/nginx/html from shared-volume (rw)
+  Volumes:
+   shared-volume:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      False   MinimumReplicasUnavailable
+  Progressing    True    ReplicaSetUpdated
+OldReplicaSets:  <none>
+NewReplicaSet:   nginx-deploy-6d8644b8f9 (1/1 replicas created)
+Events:
+  Type    Reason             Age    From                   Message
+  ----    ------             ----   ----                   -------
+  Normal  ScalingReplicaSet  2m46s  deployment-controller  Scaled up replica set nginx-deploy-6d8644b8f9 to 1
+adabalah@C02FQ8VMMD6M kube % kubectl get -f 3-init-container.yaml     
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deploy   0/1     1            0           3m13s
+adabalah@C02FQ8VMMD6M kube % watch kubectl get all -o wide            
+adabalah@C02FQ8VMMD6M kube % watch kubectl logs           
+adabalah@C02FQ8VMMD6M kube % kubectl logs nginx-deploy-6d8644b8f9-ct9tm
+Error from server (BadRequest): container "nginx" in pod "nginx-deploy-6d8644b8f9-ct9tm" is waiting to start: PodInitializing
+adabalah@C02FQ8VMMD6M kube % watch kubectl get all -o wide             
+adabalah@C02FQ8VMMD6M kube % kubectl describe deploy nginx-deploy
+Name:                   nginx-deploy
+Namespace:              default
+CreationTimestamp:      Thu, 23 Sep 2021 19:24:04 +0530
+Labels:                 run=nginx
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               run=nginx
+Replicas:               1 desired | 1 updated | 1 total | 0 available | 1 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  run=nginx
+  Init Containers:
+   busybox:
+    Image:      busybox
+    Port:       <none>
+    Host Port:  <none>
+    Command:
+      /bin/sh
+    Args:
+      -c
+      echo '<h1>Hello Kubernetes</h1>' > /nginx-data/index.html
+    Environment:  <none>
+    Mounts:
+      /nginx-data from shared-volume (rw)
+  Containers:
+   nginx:
+    Image:        nginx
+    Port:         <none>
+    Host Port:    <none>
+    Environment:  <none>
+    Mounts:
+      /usr/share/nginx/html from shared-volume (rw)
+  Volumes:
+   shared-volume:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      False   MinimumReplicasUnavailable
+  Progressing    True    ReplicaSetUpdated
+OldReplicaSets:  <none>
+NewReplicaSet:   nginx-deploy-6d8644b8f9 (1/1 replicas created)
+Events:
+  Type    Reason             Age    From                   Message
+  ----    ------             ----   ----                   -------
+  Normal  ScalingReplicaSet  4m31s  deployment-controller  Scaled up replica set nginx-deploy-6d8644b8f9 to 1
+adabalah@C02FQ8VMMD6M kube % watch kubectl get all -o wide       
+adabalah@C02FQ8VMMD6M kube % kubectl expose deploy nginx-deploy --type=NodePort --port=80
+service/nginx-deploy exposed
+adabalah@C02FQ8VMMD6M kube % watch kubectl get all -o wide                               
+adabalah@C02FQ8VMMD6M kube % watch kubectl get all -o wide
+adabalah@C02FQ8VMMD6M kube % kubectl edit node minikube-m03 -o yaML
+error: there was a problem with the editor "vi"
+adabalah@C02FQ8VMMD6M kube % watch kubectl get all -o wide         
+adabalah@C02FQ8VMMD6M kube % ssh -i ~/.minikube/machines/minikube/id_rsa docker@$(minikube ip)
+^C
+adabalah@C02FQ8VMMD6M kube % cd ~
+adabalah@C02FQ8VMMD6M ~ % cd .minikube 
+adabalah@C02FQ8VMMD6M .minikube % ls
+addons			ca.key			cache			certs			files			last_update_check	machine_client.lock	profiles		proxy-client-ca.key
+ca.crt			ca.pem			cert.pem		config			key.pem			logs			machines		proxy-client-ca.crt
+adabalah@C02FQ8VMMD6M .minikube % cd machine
+cd: no such file or directory: machine
+adabalah@C02FQ8VMMD6M .minikube % cd machines
+adabalah@C02FQ8VMMD6M machines % ls
+minikube	minikube-m02	minikube-m03	server-key.pem	server.pem
+adabalah@C02FQ8VMMD6M machines % cd minikube
+adabalah@C02FQ8VMMD6M minikube % ls
+config.json	id_rsa		id_rsa.pub
+adabalah@C02FQ8VMMD6M minikube % ls -l
+total 24
+-rw-------  1 adabalah  staff  2936 Sep 23 17:05 config.json
+-rw-------  1 adabalah  staff  1679 Sep 22 18:19 id_rsa
+-rw-------  1 adabalah  staff   381 Sep 22 18:19 id_rsa.pub
+adabalah@C02FQ8VMMD6M minikube % echo docker@$(minikube ip)
+docker@192.168.49.2
+adabalah@C02FQ8VMMD6M minikube % ssh -i id_rsa docker@192.168.49.2
+^C
+adabalah@C02FQ8VMMD6M minikube % ssh
+usage: ssh [-46AaCfGgKkMNnqsTtVvXxYy] [-B bind_interface]
+           [-b bind_address] [-c cipher_spec] [-D [bind_address:]port]
+           [-E log_file] [-e escape_char] [-F configfile] [-I pkcs11]
+           [-i identity_file] [-J [user@]host[:port]] [-L address]
+           [-l login_name] [-m mac_spec] [-O ctl_cmd] [-o option] [-p port]
+           [-Q query_option] [-R address] [-S ctl_path] [-W host:port]
+           [-w local_tun[:remote_tun]] destination [command]
+adabalah@C02FQ8VMMD6M minikube % ssh -i id_rsa.pub docker@192.168.49.2
+^C
+adabalah@C02FQ8VMMD6M minikube % ps -ef | grep :sshd
+  501 21199  4879   0  8:07PM ttys000    0:00.00 grep :sshd
+adabalah@C02FQ8VMMD6M minikube % ps -ef | grep :ssh 
+  501 21201  4879   0  8:07PM ttys000    0:00.00 grep :ssh
+adabalah@C02FQ8VMMD6M minikube % brew services start ssh
+Error: No available formula with the name "ssh". Did you mean sslh, assh, tssh, rssh, pssh, gssh, zssh, vsh, fsh, zsh, ksh or dsh?
+adabalah@C02FQ8VMMD6M minikube % brew services start sshd
+Error: No available formula with the name "sshd". Did you mean ssed?
+adabalah@C02FQ8VMMD6M minikube % ssh localhost
+ssh: connect to host localhost port 22: Connection refused
+adabalah@C02FQ8VMMD6M minikube % ssh -i id_rsa.pub docker@192.168.49.2
+ssh: connect to host 192.168.49.2 port 22: Operation timed out
+adabalah@C02FQ8VMMD6M minikube % ls
+config.json	id_rsa		id_rsa.pub
+adabalah@C02FQ8VMMD6M minikube % cd ../
+adabalah@C02FQ8VMMD6M machines % cd ~/Downloads 
+adabalah@C02FQ8VMMD6M Downloads % cd kube
+adabalah@C02FQ8VMMD6M kube % ls
+2-job.yaml			Daemonset.yaml			deploy-mem.yaml			hpa.yaml			job1.yaml			namespace.yaml			verauto.yaml
+3-init-container.yaml		components.yaml			deploy.yaml			init.yaml			kube.md				rollcreate.yaml			verdeploy.yaml
+8-nginx-rolling-update.yaml	cronjob.yaml			hpa-mem.yaml			job.yaml			kubernetes			rollupdate.yaml
+adabalah@C02FQ8VMMD6M kube % git remote -v
+fatal: not a git repository (or any of the parent directories): .git
+adabalah@C02FQ8VMMD6M kube % git init
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /Users/adabalah/Downloads/kube/.git/
+adabalah@C02FQ8VMMD6M kube % git remote add https://github.com/devopsclouds/devops.git
+usage: git remote add [<options>] <name> <url>
+
+    -f, --fetch           fetch the remote branches
+    --tags                import all tags and associated objects when fetching
+                          or do not fetch any tag at all (--no-tags)
+    -t, --track <branch>  branch(es) to track
+    -m, --master <branch>
+                          master branch
+    --mirror[=(push|fetch)]
+                          set up remote as a mirror to push to or fetch from
+
+adabalah@C02FQ8VMMD6M kube % git remote add origin https://github.com/devopsclouds/devops.git
+adabalah@C02FQ8VMMD6M kube % git remote -v                                                   
+origin	https://github.com/devopsclouds/devops.git (fetch)
+origin	https://github.com/devopsclouds/devops.git (push)
+adabalah@C02FQ8VMMD6M kube % git config --global user.name "devopsclouds"
+adabalah@C02FQ8VMMD6M kube % git config --global user.mail "devops.clouds8978@gmail.com"
+adabalah@C02FQ8VMMD6M kube % git config --global user.passwd "Devops@8978"              
+adabalah@C02FQ8VMMD6M kube % git push -u origin -f kubernetes
+error: src refspec kubernetes does not match any
+error: failed to push some refs to 'https://github.com/devopsclouds/devops.git'
+adabalah@C02FQ8VMMD6M kube % git push -u origin -f main      
+error: src refspec main does not match any
+error: failed to push some refs to 'https://github.com/devopsclouds/devops.git'
+adabalah@C02FQ8VMMD6M kube % git push -u origin kubernetes 
+error: src refspec kubernetes does not match any
+error: failed to push some refs to 'https://github.com/devopsclouds/devops.git'
+adabalah@C02FQ8VMMD6M kube % git add .
+warning: adding embedded git repository: kubernetes
+hint: You've added another git repository inside your current repository.
+hint: Clones of the outer repository will not contain the contents of
+hint: the embedded repository and will not know how to obtain it.
+hint: If you meant to add a submodule, use:
+hint: 
+hint: 	git submodule add <url> kubernetes
+hint: 
+hint: If you added this path by mistake, you can remove it from the
+hint: index with:
+hint: 
+hint: 	git rm --cached kubernetes
+hint: 
+hint: See "git help submodule" for more information.
+adabalah@C02FQ8VMMD6M kube % git commit -m "added kube yamls"
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'adabalah@C02FQ8VMMD6M.(none)')
+adabalah@C02FQ8VMMD6M kube % git config --list
+credential.helper=osxkeychain
+user.name=devopsclouds
+user.mail=devops.clouds8978@gmail.com
+user.passwd=Devops@8978
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+remote.origin.url=https://github.com/devopsclouds/devops.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+adabalah@C02FQ8VMMD6M kube % git config --global user.name "devopsclouds"               
+adabalah@C02FQ8VMMD6M kube % git config --global user.mail "devops.clouds8978@gmail.com"
+adabalah@C02FQ8VMMD6M kube % git config --global user.passwd "Devops@8978"              
+adabalah@C02FQ8VMMD6M kube % git commit -m "added kube yamls"                           
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'adabalah@C02FQ8VMMD6M.(none)')
+adabalah@C02FQ8VMMD6M kube % ls
+2-job.yaml			Daemonset.yaml			deploy-mem.yaml			hpa.yaml			job1.yaml			namespace.yaml			verauto.yaml
+3-init-container.yaml		components.yaml			deploy.yaml			init.yaml			kube.md				rollcreate.yaml			verdeploy.yaml
+8-nginx-rolling-update.yaml	cronjob.yaml			hpa-mem.yaml			job.yaml			kubernetes			rollupdate.yaml
+adabalah@C02FQ8VMMD6M kube % cat 2-job.yaml 
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: helloworld
+spec:
+  template:
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command: ["ls", "/venkat"]
+      restartPolicy: Never
+adabalah@C02FQ8VMMD6M kube % cat deploy-mem.yaml 
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: "2021-09-14T09:19:13Z"
+  generation: 1
+  labels:
+    app: ngnix
+  name: ngnix
+  namespace: default
+  resourceVersion: "77486"
+  uid: 3d19adfb-7d1d-48c7-b874-d7679c400c3a
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ngnix
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ngnix
+    spec:
+      containers:
+      - image: sushanth53/ngnix_server
+        imagePullPolicy: Always
+        name: ngnix-server-kn8cc
+        resources:
+          limits:
+            memory: "500Mi"
+          requests:
+            memory: "50Mi"
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2021-09-14T09:19:19Z"
+    lastUpdateTime: "2021-09-14T09:19:19Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2021-09-14T09:19:13Z"
+    lastUpdateTime: "2021-09-14T09:19:19Z"
+    message: ReplicaSet "ngnix-5bf8f4f885" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1
+adabalah@C02FQ8VMMD6M kube % ls
+2-job.yaml			Daemonset.yaml			deploy-mem.yaml			hpa.yaml			job1.yaml			namespace.yaml			verauto.yaml
+3-init-container.yaml		components.yaml			deploy.yaml			init.yaml			kube.md				rollcreate.yaml			verdeploy.yaml
+8-nginx-rolling-update.yaml	cronjob.yaml			hpa-mem.yaml			job.yaml			kubernetes			rollupdate.yaml
+adabalah@C02FQ8VMMD6M kube % cat Daemonset.yaml 
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ngnix-daemon
+  labels:
+    app: ngmix
+spec:
+  selector:
+    matchLabels:
+      app: ngmix
+  template:
+    metadata:
+      name: ngnix-pod
+      labels:
+        app: ngmix
+    spec:
+      containers:
+        - name: ngnix-container
+          image: sushanth53/ngnix_server
+          ports:
+            - containerPort: 80%                                                                                                                                                                                                                              adabalah@C02FQ8VMMD6M kube % cat hpa.yaml
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx
+spec:
+  maxReplicas: 5
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx
+  targetCPUUtilizationPercentage: 20
+adabalah@C02FQ8VMMD6M kube % cat job1.yaml 
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: helloworld
+spec:
+  activeDeadlineSeconds: 10
+  template:
+    spec:
+      containers:
+        - name: busybox
+          image: busybox
+          command: ["sleep","60"]
+
+      restartPolicy: Never%                                                                                                                                                                                                                                   adabalah@C02FQ8VMMD6M kube % cat namespace.yaml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-deploy
+  labels:
+    app: httpd-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: httpd
+  template:
+    metadata:
+      name: httpd-pod
+      labels:
+        app: httpd
+        tier: dev
+    spec:
+      nodeSelector:
+        ram: fast
+      containers:
+e: httpd-container
+        image: sushanth53/ngnix_server
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80
+          %                                                                                                                                                                                                                                                   adabalah@C02FQ8VMMD6M kube % vi namespace.yaml 
+adabalah@C02FQ8VMMD6M kube % ls
+2-job.yaml			Daemonset.yaml			deploy-mem.yaml			hpa.yaml			job1.yaml			namespace.yaml			verauto.yaml
+3-init-container.yaml		components.yaml			deploy.yaml			init.yaml			kube.md				rollcreate.yaml			verdeploy.yaml
+8-nginx-rolling-update.yaml	cronjob.yaml			hpa-mem.yaml			job.yaml			kubernetes			rollupdate.yaml
+adabalah@C02FQ8VMMD6M kube % cat cat 3-init-container.yaml 
+cat: cat: No such file or directory
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+
+    spec:
+
+      volumes:
+      - name: shared-volume
+        emptyDir: {}
+
+      initContainers:
+      - name: busybox
+        image: busybox
+        volumeMounts:
+        - name: shared-volume
+          mountPath: /nginx-data
+        command: ["/bin/sh"]
+        args: ["-c", "echo '<h1>Hello Kubernetes</h1>' > /nginx-data/index.html"]
+
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: shared-volume
+          mountPath: /usr/share/nginx/html
+adabalah@C02FQ8VMMD6M kube % cat 3-init-container.yaml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+
+    spec:
+
+      volumes:
+      - name: shared-volume
+        emptyDir: {}
+
+      initContainers:
+      - name: busybox
+        image: busybox
+        volumeMounts:
+        - name: shared-volume
+          mountPath: /nginx-data
+        command: ["/bin/sh"]
+        args: ["-c", "echo '<h1>Hello Kubernetes</h1>' > /nginx-data/index.html"]
+
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: shared-volume
+          mountPath: /usr/share/nginx/html
+adabalah@C02FQ8VMMD6M kube % ls
+2-job.yaml			Daemonset.yaml			deploy-mem.yaml			hpa.yaml			job1.yaml			namespace.yaml			verauto.yaml
+3-init-container.yaml		components.yaml			deploy.yaml			init.yaml			kube.md				rollcreate.yaml			verdeploy.yaml
+8-nginx-rolling-update.yaml	cronjob.yaml			hpa-mem.yaml			job.yaml			kubernetes			rollupdate.yaml
+adabalah@C02FQ8VMMD6M kube % cat components.yaml 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    k8s-app: metrics-server
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+  name: system:aggregated-metrics-reader
+rules:
+- apiGroups:
+  - metrics.k8s.io
+  resources:
+  - pods
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: system:metrics-server
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - nodes
+  - nodes/stats
+  - namespaces
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server-auth-reader
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: extension-apiserver-authentication-reader
+subjects:
+- kind: ServiceAccount
+  name: metrics-server
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server:system:auth-delegator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: metrics-server
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: system:metrics-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:metrics-server
+subjects:
+- kind: ServiceAccount
+  name: metrics-server
+  namespace: kube-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server
+  namespace: kube-system
+spec:
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: https
+  selector:
+    k8s-app: metrics-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: metrics-server
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+  
+  template:
+    metadata:
+      labels:
+        k8s-app: metrics-server
+    spec:
+      containers:
+      - args:
+        - --cert-dir=/tmp
+        - --secure-port=443
+        - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+        - --kubelet-use-node-status-port
+        - --metric-resolution=15s
+        image: k8s.gcr.io/metrics-server/metrics-server:v0.5.0
+        command:
+          - /metrics-server
+          - --kubelet-insecure-tls
+
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /livez
+            port: https
+            scheme: HTTPS
+          periodSeconds: 10
+        name: metrics-server
+        ports:
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /readyz
+            port: https
+            scheme: HTTPS
+          initialDelaySeconds: 20
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-dir
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-cluster-critical
+      serviceAccountName: metrics-server
+      volumes:
+      - emptyDir: {}
+        name: tmp-dir
+---
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: v1beta1.metrics.k8s.io
+spec:
+  group: metrics.k8s.io
+  groupPriorityMinimum: 100
+  insecureSkipTLSVerify: true
+  service:
+    name: metrics-server
+    namespace: kube-system
+  version: v1beta1
+  versionPriority: 100
+adabalah@C02FQ8VMMD6M kube % vi components.yaml 
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    k8s-app: metrics-server
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+  name: system:aggregated-metrics-reader
+rules:
+- apiGroups:
+  - metrics.k8s.io
+  resources:
+  - pods
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: system:metrics-server
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - nodes
+  - nodes/stats
+  - namespaces
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server-auth-reader
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: extension-apiserver-authentication-reader
+subjects:
+- kind: ServiceAccount
+  name: metrics-server
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server:system:auth-delegator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: metrics-server
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: system:metrics-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:metrics-server
+subjects:
+- kind: ServiceAccount
+  name: metrics-server
+  namespace: kube-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server
+  namespace: kube-system
+spec:
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: https
+  selector:
+    k8s-app: metrics-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: metrics-server
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+
+  template:
+    metadata:
+      labels:
+        k8s-app: metrics-server
+    spec:
+      containers:
+      - args:
+        - --cert-dir=/tmp
+        - --secure-port=443
+        - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+        - --kubelet-use-node-status-port
+        - --metric-resolution=15s
+        image: k8s.gcr.io/metrics-server/metrics-server:v0.5.0
+        command:
+          - /metrics-server
+          - --kubelet-insecure-tls
+
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /livez
+            port: https
+            scheme: HTTPS
+          periodSeconds: 10
+        name: metrics-server
+        ports:
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /readyz
+            port: https
+            scheme: HTTPS
+          initialDelaySeconds: 20
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-dir
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-cluster-critical
+      serviceAccountName: metrics-server
+      volumes:
+      - emptyDir: {}
+        name: tmp-dir
+---
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: v1beta1.metrics.k8s.io
+spec:
+  group: metrics.k8s.io
+  groupPriorityMinimum: 100
+  insecureSkipTLSVerify: true
+  service:
+    name: metrics-server
+    namespace: kube-system
+  version: v1beta1
+  versionPriority: 100
