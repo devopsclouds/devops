@@ -50,3 +50,15 @@ Endpoints:                172.17.0.2:80
 Session Affinity:         None
 External Traffic Policy:  Cluster
 Events:                   <none>
+
+
+
+
+
+
+create a horizontal autosacle
+kubectl autoscale deploy ngnix --max=5 --min=1 --cpu-percent=20
+
+
+
+siege -q -c 5 -t 2m http://nodeip:port
