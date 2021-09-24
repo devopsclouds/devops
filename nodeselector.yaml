@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-deploy
+  labels:
+    app: httpd-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: httpd
+  template:
+    metadata:
+      name: httpd-pod
+      labels:
+        app: httpd
+        tier: dev
+    spec:
+      nodeSelector:
+        ram: fast
+      containers:
+        - name: httpd-container
+        image: sushanth53/ngnix_server
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80
