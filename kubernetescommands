@@ -68,6 +68,7 @@ cordon        Mark node as unschedulable
 
 
 
+
 create a horizontal autosacle
 kubectl autoscale deploy ngnix --max=5 --min=1 --cpu-percent=20
 
