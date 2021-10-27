@@ -1,0 +1,7 @@
+set the limit of pods
+
+update the pod number in /var/lib/kubelet/conf.yaml
+edit the line maxPods: 100                                          
+default pod limit is 110
+
+restrat kubelet
