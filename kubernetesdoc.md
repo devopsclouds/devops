@@ -499,6 +499,11 @@ ClusterIP ñ The default value. The service is only accessible from within the K
 NodePort ñ This makes the service accessible on a static port on each Node in the cluster. This means that the service can handle requests that originate from outside the cluster.
 LoadBalancer ñ The service becomes accessible externally through a cloud provider's load balancer functionality. GCP, AWS, Azure, and OpenStack offer this functionality. The cloud provider will create a load balancer, which then automatically routes requests to your Kubernetes Service
 
+Port exposes the Kubernetes service on the specified port within the cluster. Other pods within the cluster can communicate with this server on the specified port.
+TargetPort is the port on which the service will send requests to, that your pod will be listening on. Your application in the container will need to be listening on this port also.
+NodePort exposes a service externally to the cluster by means of the target nodes IP address and the NodePort. NodePort is the default setting if the port field is not specified.
+
+
 node port
 apiVersion: v1
 kind: Service
