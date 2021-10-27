@@ -504,18 +504,102 @@ TargetPort is the port on which the service will send requests to, that your pod
 NodePort exposes a service externally to the cluster by means of the target nodes IP address and the NodePort. NodePort is the default setting if the port field is not specified.
 
 
-node port
+clusterIP:
 apiVersion: v1
 kind: Service
 metadata:
-  name: httpd-service
+  name: nginx-service
   labels:
-    app: httpd
+    app: nginx
 spec:
   selector:
-      app: httpd
+      app: nginx
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+
+headless service
+When there is no need of load balancing or single-service IP addresses.We create a headless service which is used for creating a service grouping. That does not allocate an IP address or forward traffic.So you can do this by explicitly setting ClusterIP to “None” in the mainfest file, which means no cluster IP is allocated.
+
+For example, if you host MongoDB on a single pod. And you need a service definition on top of it for taking care of the pod restart.And also for acquiring a new IP address. But you don’t want any load balancing or routing. You just need the service to patch the request to the back-end pod. So then you use Headless Service since it does not have an IP.
+
+Kubernetes allows clients to discover pod IPs through DNS lookups. Usually, when you perform a DNS lookup for a service, the DNS server returns a single IP which is the service’s cluster IP. But if you don’t need the cluster IP for your service, you can set ClusterIP to None , then the DNS server will return the individual pod IPs instead of the service IP.Then client can connect to any of them.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: headless-svc
+spec:
+  clusterIP: None
+  selector:
+    app: web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+
+loadbalancer
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-service
+spec:
+  selector:
+    app: example
+  ports:
+    - port: 8765
+      targetPort: 9376
+  type: LoadBalance
+  
+nodeportservice
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+    app: nginx
+spec:
+  selector:
+      app: nginx
   type: NodePort
   ports:
     - nodePort: 31000
       port: 80
-      targetPort: 80
+      targetPort: 80 
+      
+      
+metallb: if u are  using cloud cloud provider will create external load balance  by automataically. if not u need to setup metal lb balancer and install metal load balancer
+install: 
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.3/manifests/namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.3/manifests/metallb.yaml
+
+u need to create configmap
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - 192.168.76.240-192.168.76.250
+
+that address u specified range of loadbalancer ip when u deploy loadbalancer that one of ip will be used 
+
+
+
+  
+
+
+
+
+
+
