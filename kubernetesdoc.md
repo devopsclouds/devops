@@ -451,7 +451,15 @@ spec:
           - containerPort: 80
 
 
-
+How to schedule the pod on node using admission control plugin through namespace
+First u have add plugin PodNodeSelector in enable admission plugin on the api server
+Then add the label to node 
+Kubectl label node nodename "env="develop"
+Create the namespace : kubectl create ns dev
+Edit the namespace dev and add annotation add label whatever u add the label to node in the previous , then belongs to that label to schedule the specific node
+Add this line 
+Annotations:
+     Scheduler.alpha.kubernetes.io/node-selector: "env=Develop"
 
 
 
