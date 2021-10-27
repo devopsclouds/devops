@@ -619,12 +619,247 @@ spec:
         volumes:
                 - name: empty-vol
                   emptyDir: {}
+                  
+hostpath
+
+A hostPath volume mounts a file or directory from the file system of the host node to a pod. This topic describes how to mount hostPath volumes to pods.
+
+#hostpath.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+        name: hostpath-vol
+spec:
+        containers:
+                - name: emptycontainer
+                  image: nginx
+                  volumeMounts:
+                           - name: host-vol
+                             mountPath: /test-path
 
 
+        volumes:
+                - name: host-vol
+                  hostPath:
+                          path: /test-vol
+
+Kubernetes persistent volume
+Kubernetes persistent volumes are administrator provisioned volumes. These are created with a particular filesystem, size, and identifying characteristics such as volume IDs and names.
+
+ 
+
+A Kubernetes persistent volume has the following attributes
+
+ 
+
+It is provisioned either dynamically or by an administrator
+Created with a particular filesystem
+Has a particular size
+Has identifying characteristics such as volume IDs and a name
 
 
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nfs-pv10
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.76.139
+    path: "/src/nfs/kubedata"
+
+persistent volume claim
 
 
+A persistent volume claim (PVC) is a request for storage, which is met by binding the PVC to a persistent volume (PV). A PVC provides an abstraction layer to the underlying storage. For example, an administrator could create a number of static persistent volumes that can later be bound to one or more persistent volume claims. If none of the static persistent volumes match the user's PVC request, the cluster may attempt to dynamically create a new PV that matches the PVC request.
+inated.
+
+A persistent volume claim (PVC) is a request for storage, which is met by binding the PVC to a persistent volume (PV). A PVC provides an abstraction layer to the underlying storage. For example, an administrator could create a number of static persistent volumes that can later be bound to one or more persistent volume claims. If none of the static persistent volumes match the user's PVC request, the cluster may attempt to dynamically create a new PV that matches the PVC request.
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nfs-pv10
+spec:
+  storageClassName: managed-nfs-storage
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Mi
+and attach this claim to pod spec
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+    spec:
+      volumes:
+      - name: www
+        persistentVolumeClaim:
+          claimName: pvc-nfs-pv10
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+
+stateful set
+
+StatefulSets
+StatefulSet(stable-GA in k8s v1.9) is a Kubernetes resource used to manage stateful applications. It manages the deployment and scaling of a set of Pods, and provides guarantee about the ordering and uniqueness of these Pods.
+StatefulSet is also a Controller but unlike Deployments, it doesn’t create ReplicaSet rather itself creates the Pod with a unique naming convention. e.g. If you create a StatefulSet with name counter, it will create a pod with name counter-0, and for multiple replicas of a statefulset, their names will increment like counter-0, counter-1, counter-2, etc
+Every replica of a stateful set will have its own state, and each of the pods will be creating its own PVC(Persistent Volume Claim). So a statefulset with 3 replicas will create 3 pods, each having its own Volume, so total 3 PVCs.
+For deploying the sample counter app using a statefulset, we will be using the following manifest. you can deploy it by copying the below manifest and saving it in a file e.g. statefulset.yaml, and then applying by
+
+stateful set pv
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nfs-pv1
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    server: 192.168.76.139
+    path: "/srv/nfs/kubedata/pv1"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nfs-pv2
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    server: 192.168.76.139
+    path: "/srv/nfs/kubedata/pv2"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nfs-pv3
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    server: 192.168.76.139
+    path: "/srv/nfs/kubedata/pv3"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nfs-pv4
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    server: 192.168.76.139
+    path: "/srv/nfs/kubedata/pv4"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nfs-pv5
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    server: 192.168.76.139
+    path: "/srv/nfs/kubedata/pv5"
 
 
+sts-deploy
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-headless
+  labels:
+    run: nginx-sts-demo
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    run: nginx-sts-demo
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nginx-sts
+spec:
+  serviceName: "nginx-headless"
+  replicas: 4
+  #podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      run: nginx-sts-demo
+  template:
+    metadata:
+      labels:
+        run: nginx-sts-demo
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - name: www
+          mountPath: /var/www/
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      storageClassName: manual
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+          
+          
+StatefulSets are useful in case of Databases especially when we need Highly Available Databases in production as we create a cluster of Database replicas with one being the primary replica and others being the secondary replicas. The primary will be responsible for read/write operations and secondary for read only operations and they will be syncing data with the primary one.
 
