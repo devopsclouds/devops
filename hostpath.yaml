@@ -1,0 +1,18 @@
+#hostpath.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+        name: hostpath-vol
+spec:
+        containers:
+                - name: emptycontainer
+                  image: nginx
+                  volumeMounts:
+                           - name: host-vol
+                             mountPath: /test-path
+
+
+        volumes:
+                - name: host-vol
+                  hostPath:
+                          path: /test-vol
