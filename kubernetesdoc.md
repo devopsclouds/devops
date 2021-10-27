@@ -596,7 +596,32 @@ that address u specified range of loadbalancer ip when u deploy loadbalancer tha
 
 
 
-  
+  volumes
+  empty dir: emptyDir are volumes that get created empty when a Pod is created.
+
+While a Pod is running its emptyDir exists. If a container in a Pod crashes the emptyDir content is unaffected. Deleting a Pod deletes all its emptyDirs.
+
+There are several ways a Pod can be deleted. Accidental and deliberate. All result in immediate emptyDir deletion. emptyDir are meant for temporary working disk space.
+empty-dir.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+        name: emptydir-vol
+spec:
+        containers:
+                - name: emptycontainer
+                  image: nginx
+                  volumeMounts:
+                           - name: empty-vol
+                             mountPath: /cache
+
+
+        volumes:
+                - name: empty-vol
+                  emptyDir: {}
+
+
+
 
 
 
