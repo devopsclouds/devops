@@ -52,6 +52,18 @@ External Traffic Policy:  Cluster
 Events:                   <none>
 
 
+kubectl create pdb pdbdemo --min-avaibile 50% --selector "app=nginx-deploy"
+
+kubectl drain nodename --ignore-daemonsets    ---- Drain node in preparation for maintenance
+kubectl cordon nodename
+kubectl uncordon nodename
+cordon        Mark node as unschedulable
+  uncordon      Mark node as schedulable
+
+
+
+
+
 
 
 
