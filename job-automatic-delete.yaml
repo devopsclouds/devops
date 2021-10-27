@@ -1,0 +1,34 @@
+## job-automatic-delete.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: helloworld
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command: ["echo", "Hello Kubernetes!!!"]
+      restartPolicy: Never
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### add this line into kube-api and controller-manager
