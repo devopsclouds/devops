@@ -1,0 +1,272 @@
+docker search maveen
+docker pull maven(image name)
+docker images
+docker port containerid
+systemctl enable docker
+docker images
+docker container run -d --name sonarq -p 9000:9000 sonarqubr:latest
+`(public registry)
+docker images (we ca see image)
+docker ps -a (all containers
+docker --rm -dit --name maven1 -p 8000:80 maven:latest
+docker ps -q ( only up containers we see.
+docker run -it --name httpdcontainer1 httpd ( run aand  into image an -- container created
+docker rm httpdcontainer1 
+docker ps -a
+docker run -itd --name httpdcontainer1 httpd /bin/bash ( run contaier and start the cointainer 
+     docker attach cointainerid or containername
+
+docker ps -a (show all the running conatiners)
+docker info ( detailed info runing paused & stopped) 
+
+docker attach httpdcontainer (into docker image
+hostname 
+cat /proc/version
+
+docker start containerid/container-name (already created image
+
+docker run -it --name httpdcoinainer2 httpd /bin/bash  ( run the cointainer nd it start cointainer ad attached to cointainer terminal no need to specfy attach, into cointiner terminl / created cointainer and into docker image, forwRD PROCESS
+docker stop containerid/container
+
+docker p -a
+docker ps -q
+
+docker run -d --name httpdcoinainer2 httpd /bin/bash  { run the cointainer only
+  docker start cointainerid
+  docker attach cointainerid ( login to container
+
+docker rm --force $(docker ps -aq) { remove all containers
+docker rmi $(docker ps-a) { remove all active and containers
+
+docker rmi httpd (remove container image.)
+--->docker rm continerid ( remove container
+	--->docker stop containerid ( stops cointainer 
+
+===================================================
+docker ps -a
+docker port containerid
+docker run -itd --name port httpd /bin/bash  
+docker run -itd --name httpdprt -p 85:80 httpd /bin/bash  ( port map
+
+
+docker run -itd --name abcd -h adabala.com /bin/bash
+
+===============================================
+docker ps -a
+
+docker exec -itd containerID mkdir /opt/test  ( create in backgroud 
+
+==============================================================
+
+docker logs containerID
+docker logs --since  containerID
+
+docker inspect --format={{.LogPath}} containerID ------>log path
+ 
+logs store : default path : /var/lib/docker/images
+
+
+this is folder all docker volumes are stored
+find / -name volumes
+/var/snap/docker/common/var-lib-docker/volumes
+/var/lib/docker/volumes
+
+
+================Volumes====================================
+1. Bind mount  : ( mount pirtular file location inside the cointiner/not managed by docker.)
+
+docker run -it -v /home/user:/app -d image-name
+
+
+docker run -itd --name abc -v myvolume:/opt/text httpd /bin/bash  
+
+
+2. Docker Volume : (Managed by docker|easy to migrate data)
+
+This volume being shared by two or more containers, it is automatically mainted by docker engine.
+docker run -it --mount source=test,target=/apps -d image-name
+
+docker volume create myvolume
+docker volume ls
+docker volume rm myvolume12 
+( to delete volume
+
+
+https://www.digitalocean.com/community/tutorials/how-to-share-data-between-docker-containers
+
+
+docker run -itd --name containername -v /home/chintu:/opt/ httpd /bin/bash
+docker run -it --name server -v /home/path:/opt/chintu  httpd /bin/bash
+docker run -it --name server1 --mount type=bind,source=/home/path,target=/opt/chintu httpd /bin/bash
+
+docker system prune (removes stopped conatiners, unused network/cache)
+docker stats 
+dockeer events
+=======================================docker network======
+docker network ls 
+docker inspect bridgename?
+docker network create my_network
+docker run -itd --net=my_network --name net4 containerid /bin/bash
+---------------Commit------------------------------------
+docker commit containerID newimage ( customized image.
+
+--------------------------cp--
+docker cp /rami/hi.txt containerID:/opt/
+
+
+docker  cp cotainerid:/opt/hello.txt .  
+docker exec -it containerID ls -l /opt
+
+docker attach containerid
+docker history jenkins:latest
+docker search jenkins
+
+docker top containerID
+
+docker stats containerID  -   for stats of the container.
+
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+3d0806eccc24   nostalgic_wilbur   0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+
+
+
+
+======================Docker built====
+	FROM : 	it defines base image to choose to start build process
+	RUN 	is excuted during building the continer
+	CMD : 	Cannt built conatiners using thtis command (CMD instruction allows you to set a default command, which will be 	executed only when you run container without specifying a command , all but last CMD instructions are ignored.)
+	ENTRYPOINT : Used to override whatever function CMD comand does Or ENTRYPOINT basically suggests that finished building docker image. 
+	ADD : copy files from one pirticular directory to other directory (host to container)
+	ENV : used to set the enviroment variable.
+	WORKDIR : /var/www/html the workdir directive is used to set where the command defined with CMD is to be executed. 
+	EXPOSE	port to enable networking between running inside.
+	MAINTAINER auther_name
+	VOLUME ["/MYFILE"] custom path whwrw allthe files will be stored. all files related to  docker container will be present.
+	
+	
+	
+
+
+mkdir /opt/Docker
+vi Dockerfile
+From centos:latest
+RUN yum update -y
+RUN yum install httpd -y
+WORKDIR /var/www/html 
+COPY index.html .
+EXPOSE 80
+CMD ["/usr/sbin/httpd", "-D"  "FOREGROUND"]
+
+
+
+docker build -t webserver:1.0 .
+
+docker run -itd  --name commanecontainer -p 444:80 webserver 
+================================
+mkdir /opt/Docker
+vi Dockerfile
+From centos:latest
+RUN yum update -y
+RUN yum install httpd
+WORKDIR /var/www/html 
+COPY index.html .
+EXPOSE 80
+##CMD ["/usr/sbin/httpd", "-D"  "FOREGROUND"]
+#ENTRYPOINT echo "hello" -- not overide by docker run.
+
+docker build -t webserver:1.0 .
+docker -t --entrypoint=echo imagrname "hi world"  -- to over ride
+docker -it --entrypoint=mkdir web /newdir
+
+==========add commanet=====================
+mkdir /opt/Docker
+vi Dockerfile
+From centos:latest
+RUN yum update -y
+RUN yum install httpd
+WORKDIR /var/www/html 
+COPY index.html .
+WORKDIR /opt
+ADD hello.txt
+ADD http://maveny.apache.org/download.cgl .
+ADD appache-maven.tar.gz .
+WORKDIR /tmp
+COPY file.tar
+
+
+docker exec -it containerid /bin/bash
+root@ip-172-31-2-189:/opt/docker/Docker# docker exec -it webser3 /bin/bash
+[root@41c12d9e79bd /]# 
+
+docker pa -a
+root@ip-172-31-2-189:/opt/docker/Docker# docker ps -a
+CONTAINER ID   IMAGE           COMMAND                  CREATED         STATUS                     PORTS                               NAMES
+41c12d9e79bd   webserver:1.0   "/usr/sbin/httpd -D …"   8 seconds ago   Up 7 seconds               0.0.0.0:80->80/tcp, :::80->80/tcp   webser3
+d5f6276d89a9   webserver:1.0   "/usr/sbin/httpd -D …"   5 minutes ago   Up 5 minutes               80/tcp                              webser2
+85dbc001150c   webserver:1.0   "/usr/sbin/httpd -D …"   5 minutes ago   Exited (0) 5 minutes ago                                       webser1
+docker rm containerID
+
+mutlistage bulit
+
+
+-------------------------------
+ENV File="chintu" (defult and fix
+ARG File2="hello" (used to override)
+
+WORKDIR /usr/app 
+
+
+RUN echo "hi $File" > file.txt 
+RUN echo "$File2 hello" > file2.txt
+====================================================
+
+docker -exec -it containeerid /bin/bash ( login to docker)
+docker commit conteinerid
+=====================================================================================================
+docker run -itd --name httpdcontainer1 httpd /bin/bash ( run contaier and start the cointainer 
+     docker attach cointainerid or containername
+docker run -it --name httpdcoinainer2 httpd /bin/bash  ( run the cointainer nd it start cointainer ad attached to cointainer terminal no need to specfy attach, into cointiner terminl / created cointainer and into docker image, forwRD PROCESS
+
+docker run -d --name httpdcoinainer2 httpd /bin/bash  { run the cointainer only
+  docker start cointainerid
+  docker attach cointainerid
+  
+  dockeer ps -a
+  docker ps -q
+  
+  
+ docker rm cotainerid or container name
+ 
+ docker rm $(docker ps -a ) -all cointainer remove it
+ docker rm $(docker ps -q) -all up cointainer remove it
+ 
+ 
+ docker pull image -- when clinet enter the command docker image pull command, first it will chcek docker demon local  if the image was not found it will communicate with regstry to docker demon then store the imaage or cache the image. and gives the image to client, finallty docker image ccreated
+ docker run imge -- similarly it is docker pull command and aditional it createthe container
+ 
+ 
+ 
+ docker -exec -it containeerid /bin/bash ( login to docker)
+docker commit conteinerid
+
+==================
+FROM centos:latest
+RUN yum update -y
+RUN yum -y install httpd
+COPY index.html .
+EXPOSE 80
+CMD [ "/usr/sbin/httpd", "-D", "FOREGROUND"]
+
+=================
+vi Dockerfile
+From tomcat:latest
+RUN yum update -y
+RUN yum install httpd
+WORKDIR /var/www/html 
+COPY index.html .
+WORKDIR /opt
+ADD hello.txt
+ADD http://maveny.apache.org/download.cgl .
+ADD appache-maven.tar.gz .
+WORKDIR /tmp
+COPY file.tar
