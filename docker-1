@@ -194,6 +194,77 @@ WORKDIR /tmp
 COPY file.tar
 
 
+
+
+
+
+
+
+
+
+
+
+Docker Compose is a tool that lets you define multiple containers and their configurations via yaml file or jason file. 
+deocker compose
+docker-copmose up -d
+docker-compose stop
+docker-compose start
+
+if we changes/add/ editing docker compose again nned to run build 
+docker-compose build
+docker-compose start
+
+
+links in docker-compose.
+bulid time cmd excute cmd excutes only . once run not.
+====================================Docker Compose
+
+deocker compose
+docker-copmose up -d
+docker-compose stop
+docker-compose start
+
+if we changes/add/ editing docker compose again nned to run build 
+docker-compose build
+docker-compose start
+
+https://docs.docker.com/samples/wordpress/
+
+version: "3.9"
+    
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    volumes:
+      - wordpress_data:/var/www/html
+    ports:
+      - "8000:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+volumes:
+  db_data: {}
+  wordpress_data: {}
+  
+links in docker-compose.
+bulid time cmd excute cmd excutes only . once run not.
+
 docker exec -it containerid /bin/bash
 root@ip-172-31-2-189:/opt/docker/Docker# docker exec -it webser3 /bin/bash
 [root@41c12d9e79bd /]# 
