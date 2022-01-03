@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  db:
+   image: nginx
+   depends_on:
+           -  web
+   ports:
+     - "300:80"
+   container_name: hello
+  web:
+    build: /opt/docker
+
+    ports:
+     - "500:80"
+    volumes:
+            - /opt/logs:/var/log/httpd
+            - vol1:/opt/named
+     
+
+    container_name: webcontainer
+volumes:
+     vol1:
