@@ -37,3 +37,5 @@ CMD echo "$name"
 
 
 ENTRYPOINT ["/bin/echo", "Welcome, $name"]
+
+#ENTRYPOINT ["/bin/sh","-c", "echo $name"]
