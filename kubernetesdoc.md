@@ -552,7 +552,7 @@ spec:
   ports:
     - port: 8765
       targetPort: 9376
-  type: LoadBalance
+  type: LoadBalancer
   
 nodeportservice
 
