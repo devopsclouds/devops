@@ -1,4 +1,6 @@
 ## job-automatic-delete.yaml
+## go to api-server and controller manager
+## - --feature-gates=TTLAfterFinished =true
 apiVersion: batch/v1
 kind: Job
 metadata:
