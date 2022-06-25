@@ -1,0 +1,1 @@
+aws s3 presign s3://mybucket8978/index.html --expires-in 12
