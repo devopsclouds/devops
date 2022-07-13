@@ -1,0 +1,51 @@
+ java install 
+sudo apt update
+sudo apt install openjdk-11-jdk
+
+set java path
+ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export PATH=/usr/lib/jvm/java-11-openjdk-amd64/bin:$PATH
+
+maven install
+
+apt install unzip wget
+
+wget https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.zip
+
+unzip apache-maven-3.8.6-bin.zip
+
+set java path
+export MVN_HOME=/opt/apache-maven-3.8.6
+export PATH=$MVN_HOME/bin:$PATH
+
+jenkins install
+
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+
+sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+
+sudo apt update
+
+sudo apt install jenkins
+
+sudo systemctl enable jenkins
+
+sudo systemctl status jenkins
+
+
+Docker install
+sudo apt update
+sudo apt intsall docker.io -y
+
+Running SonarQube on Docker
+
+
+$ docker run -d --name sonarqube -p 9000:9000 -p 9092:9092 sonarqube
+
+
+systemctl enable docker
+systemctl start docker
+
+docker start sonarqube ---- whenever the sonarqube is not accessing in browser
+
+
