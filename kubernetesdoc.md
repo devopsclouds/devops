@@ -327,6 +327,36 @@ spec:
       - image: nginx:1.13
         name: nginx
 
+Blue green
+Blue-green deployment is a technique that reduces downtime and risk by running two identical production environments called Blue and Green.
+
+At any time, only one of the environments is live, with the live environment serving all production traffic. For this example, Blue is currently live and Green is idle.
+
+As you prepare a new version of your software, deployment and the final stage of testing takes place in the environment that is not live: in this example, Green. Once you have deployed and fully tested the software in Green, you switch the router so all incoming requests now go to Green instead of Blue. Green is now live, and Blue is idle.
+
+This technique can eliminate downtime due to app deployment. In addition, blue-green deployment reduces risk: if something unexpected happens with your new version on Green, you can immediately roll back to the last version by switching back to Blue.
+
+
+switch the traffic using the load balancer
+for 2 deployments using the same load balancer service but differnet selectors with lables to be used
+
+
+Blue/Green deployments are very powerful when it comes to easy rollbacks, but they are not the only approach for updating your Kubernetes application.
+
+canary deployment
+
+Another deployment strategy is using Canaries (a.k.a. incremental rollouts). With canaries, the new version of the application is gradually deployed to the Kubernetes cluster while getting a very small amount of live traffic (i.e. a subset of live users are connecting to the new version while the rest are still using the previous version).
+
+
+The small subset of live traffic to the new version acts as an early warning for potential problems that might be present in the new code. As our confidence increases, more canaries are created and more users are now connecting to the updated version. In the end, all live traffic goes to canaries, and thus the canary version becomes the new “production version”.
+
+
+The big advantage of using canaries is that deployment issues can be detected very early while they still affect only a small subset of all application users. If something goes wrong with a canary, the production version is still present and all traffic can simply be reverted to it.
+
+While a canary is active, you can use it for additional verification (for example running smoke tests) to further increase your confidence on the stability of each new version.
+
+kubectl scale deploy deploy-1 --replicas=5
+kubectl scale deploy deploy-2 --replicas=1
 
 
 
