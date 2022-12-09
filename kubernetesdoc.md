@@ -800,7 +800,9 @@ persistentvolume/pv-nfs-pv1 patched
 root@hanuman-Latitude-3420:/kube/kubernetes# kubectl patch pvc pvc-nfs-pv1  -p '{"metadata":{"finalizers":null}}'
 
   
+Dynamic nfs:Dynamic NFS Provisioning: is allows storage volumes to be created on-demand. The dynamic provisioning feature eliminates the need for cluster administrators to code-provision storage. Instead, it automatically provisions storage when it is requested by users.
   
+  if archetypeon delete on true in storage class : when you delete pvc its delete the remote path
   
 
 stateful set
