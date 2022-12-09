@@ -644,26 +644,7 @@ spec:
       
       
 metallb: if u are  using cloud cloud provider will create external load balance  by automataically. if not u need to setup metal lb balancer and install metal load balancer
-install: 
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.3/manifests/namespace.yaml
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.3/manifests/metallb.yaml
 
-u need to create configmap
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  namespace: metallb-system
-  name: config
-data:
-  config: |
-    address-pools:
-    - name: default
-      protocol: layer2
-      addresses:
-      - 192.168.76.240-192.168.76.250
-
-that address u specified range of loadbalancer ip when u deploy loadbalancer that one of ip will be used 
 
 
 
@@ -716,11 +697,8 @@ spec:
 
 Kubernetes persistent volume
 Kubernetes persistent volumes are administrator provisioned volumes. These are created with a particular filesystem, size, and identifying characteristics such as volume IDs and names.
-
- 
-
 A Kubernetes persistent volume has the following attributes
-
+when admin create a pv , and user claim request a some storage and used it in actual deploy
  
 
 It is provisioned either dynamically or by an administrator
@@ -728,6 +706,28 @@ Created with a particular filesystem
 Has a particular size
 Has identifying characteristics such as volume IDs and a name
 
+  install nfs-server  package in server
+  cat /etc/exports 
+# /etc/exports: the access control list for filesystems which may be exported
+#		to NFS clients.  See exports(5).
+#
+# Example for NFSv2 and NFSv3:
+# /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
+#
+# Example for NFSv4:
+# /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+# /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+#
+/srv/nfs/kubedata *(rw,sync,no_subtree_check,insecure)
+  
+  mkdir -p /srv/nfs/kubedata
+root@nfs:~# chmod -R 777 /srv/nfs
+root@nfs:~# exportfs -avr
+exporting *:/srv/nfs/kubedata
+
+  install nfs-clinet package in client
+  apt install nfs-client
+  
 
 apiVersion: v1
 kind: PersistentVolume
@@ -742,7 +742,7 @@ spec:
   accessModes:
     - ReadWriteMany
   nfs:
-    server: 192.168.76.139
+    server: 
     path: "/src/nfs/kubedata"
 
 persistent volume claim
@@ -791,6 +791,17 @@ spec:
         volumeMounts:
         - name: www
           mountPath: /usr/share/nginx/html
+  
+ if pv and pvc are in stuck
+  root@hanuman-Latitude-3420:/kube/kubernetes# kubectl patch pv jhooq-pv -p '{"metadata":{"finalizers":null}}'
+Error from server (NotFound): persistentvolumes "jhooq-pv" not found
+root@hanuman-Latitude-3420:/kube/kubernetes# kubectl patch pv pv-nfs-pv1  -p '{"metadata":{"finalizers":null}}'
+persistentvolume/pv-nfs-pv1 patched
+root@hanuman-Latitude-3420:/kube/kubernetes# kubectl patch pvc pvc-nfs-pv1  -p '{"metadata":{"finalizers":null}}'
+
+  
+  
+  
 
 stateful set
 
