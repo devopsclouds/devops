@@ -934,3 +934,120 @@ spec:
           
 StatefulSets are useful in case of Databases especially when we need Highly Available Databases in production as we create a cluster of Database replicas with one being the primary replica and others being the secondary replicas. The primary will be responsible for read/write operations and secondary for read only operations and they will be syncing data with the primary one.
 
+
+  
+  
+  
+  ingress:
+  helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+ helm repo update
+ 
+ helm install myrelease ingress-nginx/ingress-nginx
+
+An API object that manages external access to the services in a cluster, typically HTTP.
+
+Ingress may provide load balancing, SSL termination and name-based virtual hosting.
+
+Terminology
+For clarity, this guide defines the following terms:
+
+Node: A worker machine in Kubernetes, part of a cluster.
+Cluster: A set of Nodes that run containerized applications managed by Kubernetes. For this example, and in most common Kubernetes deployments, nodes in the cluster are not part of the public internet.
+Edge router: A router that enforces the firewall policy for your cluster. This could be a gateway managed by a cloud provider or a physical piece of hardware.
+Cluster network: A set of links, logical or physical, that facilitate communication within a cluster according to the Kubernetes networking model.
+Service: A Kubernetes Service that identifies a set of Pods using label selectors. Unless mentioned otherwise, Services are assumed to have virtual IPs only routable within the cluster network.
+What is Ingress?
+Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster. Traffic routing is controlled by rules defined on the Ingress resource.
+
+Here is a simple example where an Ingress sends all its traffic to one Service:
+
+ingress-diagram
+Figure. Ingress
+
+An Ingress may be configured to give Services externally-reachable URLs, load balance traffic, terminate SSL / TLS, and offer name-based virtual hosting. An Ingress controller is responsible for fulfilling the Ingress, usually with a load balancer, though it may also configure your edge router or additional frontends to help handle the traffic.
+
+An Ingress does not expose arbitrary ports or protocols. Exposing services other than HTTP and HTTPS to the internet typically uses a service of type Service.Type=NodePort or Service.Type=LoadBalancer.
+
+
+
+
+ingreess - it will route the traffic and specify the rules. suppose if the request comes from nginx.devops.com and it will route the taffic to this service(that rules we specified in yamls files)
+
+
+ingress class
+
+
+
+ingress default calss
+kubectl edit ingressclass ingressclassname 
+and add annontations
+You can mark a particular IngressClass as default for your cluster. Setting the ingressclass.kubernetes.io/is-default-class: "true"  annotation to true on an IngressClass resource will ensure that new Ingresses without an ingressClassName field specified will be assigned this default IngressClass.
+
+
+
+
+
+ingress sticky
+Sticky sessions or session affinity, is a feature that allows you to keep a session alive for a certain period of time. In a Kubernetes cluster, all the traffic from a client to an application, even if you scale from 1 to 3 or more replicas, will be redirected to the same pod.
+
+ANd add anotation ingress-resource yaml file
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+
+  job:
+  suppose if the pod is deleted it will recreate the again until the job should be execute
+
+if the pod fails the job will run another pod until the  job should be execute
+
+completions(non parrallel) -  if you specify 2 it will execute 2 jobs one after another
+
+parallelism - if you specify 2 it will execute 2 jobs at a same time
+
+backofflimit --  if you specify 3 , the iteration wil occur 4 pod fails then it will stops the job
+
+activedeadlineseconds --- i dont want the job to long runner if you specify the time limit the time limit excedes then it will not run 
+
+
+
+cronjob --- it will run the job on the  specific time
+
+
+successfuljobhistorylimit  ---- if u specify 2 the 2 succesfull jobs will be there
+
+failedjobhistorylimit --- f u specify 2 the 2 failed  jobs will be there
+
+
+
+suspend if you specify true the job will be suspend
+
+
+
+how to delete jobs automatic
+in the job spec ttlsecafterfinishedjobs: 10
+aftercjob completion it will wait 10 sec then the job will delete
+
+
+
+
+
+init container - init container runs before the actual container run . if th init container sucessfull executed then only process with actual container. if the init container fails it will not start actual container , if fails it will restart the init container again
+
+if you have multiple init  container it will start the sequences one init container another
+
+
+pause container -pause container is the container that hold all the containers of a pod together
+pause container is always created before the mai container
+
+pause container is infrastracure container whose sole purpose to all these namespaces
+
+all user defined containers of the pod then use the namespace of the pod infrastracure container
+
+when u stop pause container the kubernetes detects the pod is unhealty and it will recreate again the pod then ipaddress will change
+
+when u stop main container it will not affect to pod but restart increment no ipaddress will change
+
+
+
+  
