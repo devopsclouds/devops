@@ -829,11 +829,89 @@ root@hanuman-Latitude-3420:/kube/kubernetes# kubectl patch pv pv-nfs-pv1  -p '{"
 persistentvolume/pv-nfs-pv1 patched
 root@hanuman-Latitude-3420:/kube/kubernetes# kubectl patch pvc pvc-nfs-pv1  -p '{"metadata":{"finalizers":null}}'
 
-  
+ prestient volume using hostpath.
+pv:
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: log-volume
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: manual
+  hostPath:
+    path: /opt/volume/nginx
+ pvc
+  apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: log-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 200Mi
+  storageClassName: manual
+ 
+  apply the pvc in pod
+  ---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: logger
+# pod name
+  name: logger
+spec:
+  containers:
+  - image: nginx:alpine
+    name: logger
+    volumeMounts:
+    - name: log
+      mountPath: /var/www/nginx
+  volumes:
+  - name: log
+    persistentVolumeClaim:
+        claimName: log-claim
+
+ 
 Dynamic nfs:Dynamic NFS Provisioning: is allows storage volumes to be created on-demand. The dynamic provisioning feature eliminates the need for cluster administrators to code-provision storage. Instead, it automatically provisions storage when it is requested by users.
   git hub nfs external subdir:https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner.git
   if archetypeon delete on true in storage class : when you delete pvc its delete the remote path
   
+ network policy
+  apiVersion: v1
+kind: List
+items:
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2023-02-07T10:29:32Z"
+    generation: 1
+    name: np
+    namespace: default
+    resourceVersion: "1930"
+    uid: 717f3df9-eedd-4b8b-b93e-2c1e8ec85f03
+  spec:
+    podSelector:
+      matchLabels:
+        run: secure-pod
+
+    policyTypes:
+    - Ingress
+    ingress:
+    - from:
+        
+        - podSelector:
+            matchLabels:
+              name: webapp-color
+              
+      ports:
+      - protocol: TCP          
+        port: 80
 
 stateful set
 
@@ -1093,4 +1171,48 @@ when u stop main container it will not affect to pod but restart increment no ip
 
 
 
-  
+how the config map applies in a pod
+k create cm time-config --from-literal=TIME_FREQ=10 -n dvl1987
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: time-check
+  name: time-check
+  namespace: dvl1987
+spec:
+  containers:
+  - image: busybox
+    name: time-check
+    volumeMounts:
+      - name: vol
+        mountPath: /opt/time
+    
+    env:
+      - name: TIME_FREQ
+        valueFrom:
+          configMapKeyRef:
+            name: time-config
+            key: TIME_FREQ
+    command: ["/bin/sh", "-c", "while true; do date; sleep $TIME_FREQ;done > /opt/time/time-check.log"]
+    resources: {}
+  volumes:
+    - name: vol
+      emptyDir: {}
+
+
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+ 
+ test 1:
+    Create a redis deployment with the following parameters:
+Name of the deployment should be redis using the redis:alpine image. It should have exactly 1 replica.
+The container should request for .2 CPU. It should use the label app=redis.
+It should mount exactly 2 volumes.
+
+a. An Empty directory volume called data at path /redis-master-data.
+b. A configmap volume called redis-config at path /redis-master.
+c. The container should expose the port 6379.
+The configmap has already been created.
