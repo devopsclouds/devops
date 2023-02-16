@@ -23,4 +23,11 @@ when u stop the container it will wait for 10 seconds to stop the process
 when u kill the container it forecefully stop the container
 usecase: when container is not responding this kill command will be use
 
+# podman
+Podman, like Docker, is an open source engine for deploying and managing containerized applications. Podman builds OCI-compliant containers from existing images or from Containerfiles and Dockerfiles.
 
+The Podman engine was originally developed by Red Hat with the intention of providing a daemonless alternative to Docker. By employing a daemonless architecture, Podman seeks to remedy security concerns around Docker’s daemon-based process.
+
+Additionally, Podman’s daemonless architecture grants it a truly rootless mode. Docker commands can be run by non-root users, but its daemon that executes those commands continues to run on root. Podman, instead, executes commands directly and avoids the need for root privileges.
+
+podman is more secure then docker
