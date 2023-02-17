@@ -829,6 +829,11 @@ root@hanuman-Latitude-3420:/kube/kubernetes# kubectl patch pv pv-nfs-pv1  -p '{"
 persistentvolume/pv-nfs-pv1 patched
 root@hanuman-Latitude-3420:/kube/kubernetes# kubectl patch pvc pvc-nfs-pv1  -p '{"metadata":{"finalizers":null}}'
 
+ Create a Persistent Volume called log-volume. It should make use of a storage class name manual. It should use RWX as the access mode and have a size of 1Gi. The volume should use the hostPath /opt/volume/nginx
+
+Next, create a PVC called log-claim requesting a minimum of 200Mi of storage. This PVC should bind to log-volume.
+
+Mount this in a pod called logger at the location /var/www/nginx. This pod should use the image nginx:alpine.
  prestient volume using hostpath.
 pv:
 apiVersion: v1
@@ -883,7 +888,20 @@ Dynamic nfs:Dynamic NFS Provisioning: is allows storage volumes to be created on
   if archetypeon delete on true in storage class : when you delete pvc its delete the remote path
   
  network policy
-  apiVersion: v1
+  
+  test
+  We have deployed a new pod called secure-pod and a service called secure-service. Incoming or Outgoing connections to this pod are not working.
+Troubleshoot why this is happening.
+
+Make sure that incoming connection from the pod webapp-color are successful.
+
+Important: Don't delete any current objects deployed.
+  kubectl get po --show-labels
+  kubectl exec -it webapp-color --sh
+  nc -v -z -w 2 secure-service 80
+  
+  
+apiVersion: v1
 kind: List
 items:
 - apiVersion: networking.k8s.io/v1
@@ -1169,7 +1187,12 @@ when u stop pause container the kubernetes detects the pod is unhealty and it wi
 
 when u stop main container it will not affect to pod but restart increment no ipaddress will change
 
-
+  
+  # test
+Create a pod called time-check in the dvl1987 namespace. This pod should run a container called time-check that uses the busybox image.
+Create a config map called time-config with the data TIME_FREQ=10 in the same namespace.
+The time-check container should run the command: while true; do date; sleep $TIME_FREQ;done and write the result to the location /opt/time/time-check.log.
+The path /opt/time on the pod should mount a volume that lasts the lifetime of this pod.
 
 how the config map applies in a pod
 k create cm time-config --from-literal=TIME_FREQ=10 -n dvl1987
@@ -1202,6 +1225,7 @@ spec:
       emptyDir: {}
 
 
+
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 status: {}
@@ -1216,3 +1240,39 @@ a. An Empty directory volume called data at path /redis-master-data.
 b. A configmap volume called redis-config at path /redis-master.
 c. The container should expose the port 6379.
 The configmap has already been created.
+
+  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: redis-config
+        configMap:
+          name: redis-config
+      containers:
+      - image: redis:alpine
+        name: redis
+        volumeMounts:
+        - mountPath: /redis-master-data
+          name: data
+        - mountPath: /redis-master
+          name: redis-config
+        ports:
+        - containerPort: 6379
+        resources:
+          requests:
+            cpu: "0.2"
