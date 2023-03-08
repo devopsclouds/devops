@@ -40,7 +40,8 @@ it ensure the correct number of pods are running as mention in the spec file
 
 etcd is central data base store current state of the cluster at any point of time. it is  key value distributed data base the data will stored related to cluster
 worker node components
-kubelet : kubelet is the primary node agent in every worker node inside the cluster. bascially it look the pod spec and submitted to api server in master
+kubelet : kubelet is the primary node agent in every worker node inside the cluster.kubelet interacts with the both container and node.kubelet start the pod with a 
+container inside. And assign resources from node to the container.bascially it look the pod spec and submitted to api server in master
 ensure that pod to be running and healthy.if the kubelet notices any issues in the pod in the worker node . then it will restart the pods in same worker node
 if the problem within in the worker node itself then the matser detects the failure node and launches the pod in another worker node.
 if all depends on pod is replication controller or repplication set
@@ -48,6 +49,8 @@ if all depends on pod is replication controller or repplication set
 kube proxy . It is responsible for mantaining the entire network configuration and it also exposes the service to outside the world
 
 
+every node have multiple pods associated with it
+worker node do the actual work
 Every node is unique is ip adddress . in the kubernetes when we deployed the pod in the cluster we get pod ip address
 
 pod: pod contain one or more container most cases one container 
