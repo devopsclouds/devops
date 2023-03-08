@@ -1,0 +1,38 @@
+Before microservices a monolthitic was a standard
+let take the example of online shopping like user login , items , add to cart,payment
+All these components are part of a single unit and all these functionalities in one code base
+everthing is developed , deployed and scaled as a 1 unit.
+App must be written with 1 tech stack.
+Team  need to be careful to not affect with each other work.
+1 single artifact you must redeploy the entire application on each update.
+
+
+challenges of monolithic 
+Application is too large and complex
+parts are more tangled into each other
+you can only scale the entire app instead of a specific service
+high infrastracture costs
+Release process takes longer
+on every change the entire application need to be tested
+ entire application need to be built and deployed
+ bug in any module can potentinal bring down the entire application.
+ 
+ 
+ 
+ # microservices
+ 
+ to break the application based on functionalities
+ each microservices can choose its own tech stack.
+ each service has self contained and implements a single bussiness capability
+ each team can develop the services independently without affecting it others
+ There is a change in one of the component then you need to deploy the particular component
+ 
+ communciation between one component to another component by using Api calls, message blocker,service mesh.
+ 
+ Downsides of microservices
+ configure the communcation between services
+ 
+ mono repo vs poly repo
+ 
+ mono repo has one repo that contains multiple services in git hub or git lab
+ poly repo: each service has own repoistory
