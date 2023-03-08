@@ -54,11 +54,17 @@ every node have multiple pods associated with it
 worker node do the actual work
 Every node is unique is ip adddress . in the kubernetes when we deployed the pod in the cluster we get pod ip address
 
+istio: istio is a service mesh. service mesh manages communication between micro services.
+service mesh with sidecar pattern
+  sidecar proxy handles these networking logic and act as a proxy and it is third-party application . cluster operations can configure it easily . developer can focus on the actual bussiness logic. control plane injects the side car proxy in every micro service. now the microservices can talk to eaching using proxy
+  on of the most important feature in istio service mesh is traffic splitting. if there is any change in one of the service is like payment service and new version it will build , tested and then deploy to production . you cant be sure ther is a no bug . in this case you can send the tra ffic 10 percent for new versions.release new versions without worrying about breaking the application.
+
 pod: pod contain one or more container most cases one container 
 if  the pod has one or more containers how we can communicate . as we know each pod has unique ipaddess , same cname communicate ipdress through different port number containers
 how the two pods can communicate by using pod network.
 u r defining manifest file and submitted to api serverin kubernetes master and scheduler schelude the pods in the appromirimate worker node once it is scheduled then 
 go to pending state during the pending state it downlod the container of required images ,once it is done then it goes to running state
+
 
 in the mainfest yaml file they are 4 attributes
 apiversion: v1 [ apiversion is the version of pod]
