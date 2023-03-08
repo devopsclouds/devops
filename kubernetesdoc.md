@@ -25,10 +25,11 @@ API Server: Api server is the entire gatekeeper of cluster.
 API : all the objects perform in the API like pod craetion, service and any operation , API using kubectl command or UI
 then Api interacts with api server. api server should do the validates the objects.
 
+then api server sends to schedular
 shecudelar . shecudlig in the pods acrosss multipe nodes   kubernetes deponds upon the constraints like memory etc
 suppose if the application requires x constarints the scheduler will look the appromaite work node for that application
 
-controller manager
+controller manager --- detects control cluster state changes
 they are four
 1.node point controller
 2.repplication controller
@@ -38,7 +39,7 @@ these controller are responsible for health check of entire cluster
 it ensures the nodes are up and running
 it ensure the correct number of pods are running as mention in the spec file
 
-etcd is central data base store current state of the cluster at any point of time. it is  key value distributed data base the data will stored related to cluster
+etcd: etcd is central data base store current state of the cluster at any point of time. it is  key value distributed data base the data will stored related to cluster
 worker node components
 kubelet : kubelet is the primary node agent in every worker node inside the cluster.kubelet interacts with the both container and node.kubelet start the pod with a 
 container inside. And assign resources from node to the container.bascially it look the pod spec and submitted to api server in master
