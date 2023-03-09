@@ -1290,3 +1290,28 @@ spec:
         resources:
           requests:
             cpu: "0.2"
+  
+  
+  ## kubernetes security with best practices
+  
+  Image scanning
+  We are doing the image scaning by using synk.
+  scaning during build in ci/cd pipeline. scan image before pushing to the repositorie
+  scan in the repositories.
+  
+  Image scan will do check for vulnerabilities and check for misconfigurations
+  
+  Second security is run container as non user
+  create a dedicate user and group in docker file
+  change to non root user with USER directive
+  and security context in the pod manifest file allow privalledge escaulation false
+  
+Third security is Rb
+ 
+  4th security is Network policy : allow least access by applying rules
+  
+by default each pod has communicate with another pod
+  using network policy restrict the access from one pod to another pod
+  example:frontend pod can communicate with backend pod
+  not the data base pod
+  
