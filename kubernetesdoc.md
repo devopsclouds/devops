@@ -1371,5 +1371,41 @@ items:
       - protocol: TCP          
         port: 80
 
-  
-  
+  5. image pull secret from docker registry
+  login to docker hub 
+  docker login
+  then ur cred are stored in below file
+  cat /root/.docker/config.json
+  kubectl create secret generic my-registry --from-file=.dockerconfigjson=.docker/config.json --type=kubernetes.io/dockerconfigjson
+  apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      imagePullSecrets:
+      - name: my-registry
+
+      containers:
+      - image: docker89781/dotnetappgithub
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+        imagePullPolicy: Always
+status: {}
+
+  then u have to secret in magePullSecrets in pod spec
