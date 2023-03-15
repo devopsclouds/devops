@@ -1307,6 +1307,59 @@ spec:
   and security context in the pod manifest file allow privalledge escaulation false
   
 Third security is Rb
+  restrict the namespace , create user , wha access  give to user  within namespace  then create users,role rolebinding in kubernetes
+suppose if u create the role verbs are get nd resources are pod only then user can only acess list the pods within that namespace
+if user restrict the namespace first u have to authencating creating key  and certificate by following below steps
+
+
+
+User certificate creation
+
+
+ Creating Users and Roles
+
+Generating private key for John (john.key)
+
+$ openssl genrsa -out john.key 2048
+Generating certificate signing request (john.csr)
+
+openssl req -new -key john.key -out john.csr -subj "/CN=john/O=finance"
+Copy kubernetes ca certificate and key from the master node kmaster
+
+If you used my vagrant provisioning scripts, the root password for all the nodes is "kubeadmin"
+
+lxc file pull kmaster/etc/kubernetes/pki/ca.key /kuber
+lxc file pull kmaster/etc/kubernetes/pki/ca.crt /kuber
+Sign the certificate using certificate authority
+
+openssl x509 -req -in john.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out john.crt -days 365
+
+ then craete the kubeconfig file and add user,namespace, context name in contexts and add key and cerificate in kubeconfig
+ 
+ sudo cp ~/.kube/config john.kubeconfig
+ cat john.crt | base64 -w0 
+ cat john.key | base64 -w0
+ 
+ 
+ create a role : kubectl create role john-finance  --verb=get,list --resource=pods --namespace finance
+ 
+ roles are
+ 1.apigroups
+2.verbs-get,list etc
+3.resources-pods,deploy
+
+role has be applied to namespace
+note:clusterrole has be applied to cluster
+
+rolebinding - user to binding to that particular role
+
+kubectl create rolebinding john-finance-rolebinding1 --role=john-finance --user=john  --namespace finance
+
+
+then user get the access of namespace
+kubectl -n finance get pods
+not the entire cluster
+
  
   4th security is Network policy : allow least access by applying rules
   
