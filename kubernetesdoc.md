@@ -1,15 +1,14 @@
-kubernetes
+# kubernetes
 
 kubernetes is opn source container architecture engine manage containers for high avaiblity.
 cluster management
 scheduling
 service discovery monitoring
-
 secrets management
 
 
 kubernetes is also called as k8s
-k8s architecture
+# k8s architecture
 
 ![image](https://user-images.githubusercontent.com/83501971/225259047-6080def1-673e-4463-8e9e-b500eb293357.png)
 
