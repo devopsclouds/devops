@@ -901,49 +901,6 @@ Dynamic nfs:Dynamic NFS Provisioning: is allows storage volumes to be created on
   git hub nfs external subdir:https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner.git
   if archetypeon delete on true in storage class : when you delete pvc its delete the remote path
   
- network policy
-  
-  test
-  We have deployed a new pod called secure-pod and a service called secure-service. Incoming or Outgoing connections to this pod are not working.
-Troubleshoot why this is happening.
-
-Make sure that incoming connection from the pod webapp-color are successful.
-
-Important: Don't delete any current objects deployed.
-  kubectl get po --show-labels
-  kubectl exec -it webapp-color --sh
-  nc -v -z -w 2 secure-service 80
-  
-  
-apiVersion: v1
-kind: List
-items:
-- apiVersion: networking.k8s.io/v1
-  kind: NetworkPolicy
-  metadata:
-    creationTimestamp: "2023-02-07T10:29:32Z"
-    generation: 1
-    name: np
-    namespace: default
-    resourceVersion: "1930"
-    uid: 717f3df9-eedd-4b8b-b93e-2c1e8ec85f03
-  spec:
-    podSelector:
-      matchLabels:
-        run: secure-pod
-
-    policyTypes:
-    - Ingress
-    ingress:
-    - from:
-        
-        - podSelector:
-            matchLabels:
-              name: webapp-color
-              
-      ports:
-      - protocol: TCP          
-        port: 80
 
 stateful set
 
@@ -1367,4 +1324,52 @@ by default each pod has communicate with another pod
   using network policy restrict the access from one pod to another pod
   example:frontend pod can communicate with backend pod
   not the data base pod
+  
+  # example:
+  
+    network policy
+  
+  test
+  We have deployed a new pod called secure-pod and a service called secure-service. Incoming or Outgoing connections to this pod are not working.
+Troubleshoot why this is happening.
+
+Make sure that incoming connection from the pod webapp-color are successful.
+
+Important: Don't delete any current objects deployed.
+  
+  kubectl exec -it webapp-color -- sh
+  nc -v -z -w 2 secure-service 80
+  
+  
+apiVersion: v1
+kind: List
+items:
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2023-02-07T10:29:32Z"
+    generation: 1
+    name: np
+    namespace: default
+    resourceVersion: "1930"
+    uid: 717f3df9-eedd-4b8b-b93e-2c1e8ec85f03
+  spec:
+    podSelector:
+      matchLabels:
+        run: secure-pod
+
+    policyTypes:
+    - Ingress
+    ingress:
+    - from:
+        
+        - podSelector:
+            matchLabels:
+              name: webapp-color
+              
+      ports:
+      - protocol: TCP          
+        port: 80
+
+  
   
