@@ -1,6 +1,6 @@
 pipepline workflow and stages.
 so when it comes to my pipeline we use git flow strategy here when developers be working on their features branches  and merges  it to the developer branch.
 
-# multistage build
+# multistage build: its used to optimize the container images and make them smaller.
 multi-stage builds let you create optimized Docker images with only the dependencies necessary to build your application. Combined with Docker’s layered images, this can help you save significant space. The multi-stage process saves space on your Docker host and in the Docker image and speeds up the build process
 This way, you can separate the build and runtime environments in the same Dockerfile. Use build environment as a dependency [COPY --from=build HelloWorld.class .] while creating the Dockerfile with the approach of multi-stage docker build. This will help minimize the size of Docker images.
