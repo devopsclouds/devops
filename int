@@ -111,9 +111,52 @@ service mesh with sidecar pattern
   
   on of the most important feature in istio service mesh is traffic splitting. if there is any change in one of the service is like payment service and new version it will build , tested and then deploy to production . you cant be sure ther is a no bug . in this case you can send the traffic 10 percent for new versions.release new versions without worrying about breaking the application.
   
-  ## kubernetes arc:
+
   
   
  
  mono repo has one repo that contains multiple services in git hub or git lab
  poly repo: each service has own repoistory
+ ## kubernetes arc:
+ 1.worker nodes are nothing but virtual machines or physcial servers running within in a data centre . All these nodes join together
+
+to form a cluster.
+2.pod is scheduling unit in kubernetes . each pod consists of one or more containers , most cases only one container. container are
+run run time enviornment for run time appilication . containers are designed to run microservices application are not monolithic application
+
+3.master is resposible for manging the entire cluster.it monitors the health check of the nodes.when the work node fails it moves work node to failure node.
+and keep to  another healthy node
+
+k8s master components
+API Server: Api server is the entire gatekeeper of cluster. 
+API : all the objects perform in the API like pod craetion, service and any operation , API using kubectl command or UI
+then Api interacts with api server. api server should do the validates the objects.
+
+then api server sends to schedular
+shecudelar . shecudlig in the pods acrosss multipe nodes   kubernetes deponds upon the constraints like memory etc
+suppose if the application requires x constarints the scheduler will look the appromaite work node for that application
+
+controller manager --- detects control cluster state changes
+they are four
+1.node point controller
+2.repplication controller
+3.end point controller
+
+these controller are responsible for health check of entire cluster
+it ensures the nodes are up and running
+it ensure the correct number of pods are running as mention in the spec file
+
+etcd: etcd is central data base store current state of the cluster at any point of time. it is  key value distributed data base the data will stored related to cluster
+worker node components
+kubelet : kubelet is the primary node agent in every worker node inside the cluster.kubelet interacts with the both container and node.kubelet start the pod with a 
+container inside. And assign resources from node to the container.bascially it look the pod spec and submitted to api server in master
+ensure that pod to be running and healthy.if the kubelet notices any issues in the pod in the worker node . then it will restart the pods in same worker node
+if the problem within in the worker node itself then the matser detects the failure node and launches the pod in another worker node.
+if all depends on pod is replication controller or repplication set
+
+kube proxy . It is responsible for mantaining the entire network configuration and it also exposes the service to outside the world
+
+
+every node have multiple pods associated with it
+worker node do the actual work
+Every node is unique is ip adddress . in the kubernetes when we deployed the pod in the cluster we get pod ip address
