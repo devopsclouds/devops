@@ -1080,24 +1080,45 @@ An Ingress may be configured to give Services externally-reachable URLs, load ba
 
 An Ingress does not expose arbitrary ports or protocols. Exposing services other than HTTP and HTTPS to the internet typically uses a service of type Service.Type=NodePort or Service.Type=LoadBalancer.
 
-
-
-
 ingreess - it will route the traffic and specify the rules. suppose if the request comes from nginx.devops.com and it will route the taffic to this service(that rules we specified in yamls files)
 
+first example of ingress-resource
+below example ingress resource specify the one rule if the request comes from nginx.example.com and it will route the traffic to service nginx-deploy-main
+using ingress loadbancer it will hadlle traffic
+ kubectl create deploy nginx-deploy-main --image=nginx --port=80
+kubectl expose deploy nginx-deploy-main --port=80 
 
-ingress class
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-resource-1
+spec:
+  
+  rules:
+  - host: nginx.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-deploy-main
+            port: 
+              number: 80
+second example of ingress-resource
+below example ingress resource specify the three rules one request comes from nginx.example.com and it will route the traffic to service nginx-deploy-main and second request comes from blue.nginx.example.com and it will route the traffic to service nginx-deploy-blue and third request comes from green.nginx.example.com and it will route the traffic to service nginx-deploy-green
+                                                                                                                                                third third example of ingress-resource
+ 
+below example ingress resource specify the three rules one request comes from nginx.example.com and it will route the traffic to service nginx-deploy-main and second request comes from nginx.example.com/blue and it will route the traffic to service nginx-deploy-blue and third request comes from nginx.example.com/green and it will route the traffic to service nginx-deploy-green  
 
+ingress class:
+The default Ingress class of NGINX Ingress Controller is nginx , which means that it only handles configuration resources with the class set to nginx . You can customize the class through the -ingress-class command-line argument.
 
 
 ingress default calss
 kubectl edit ingressclass ingressclassname 
 and add annontations
 You can mark a particular IngressClass as default for your cluster. Setting the ingressclass.kubernetes.io/is-default-class: "true"  annotation to true on an IngressClass resource will ensure that new Ingresses without an ingressClassName field specified will be assigned this default IngressClass.
-
-
-
-
 
 ingress sticky
 Sticky sessions or session affinity, is a feature that allows you to keep a session alive for a certain period of time. In a Kubernetes cluster, all the traffic from a client to an application, even if you scale from 1 to 3 or more replicas, will be redirected to the same pod.
