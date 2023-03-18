@@ -160,3 +160,19 @@ kube proxy . It is responsible for mantaining the entire network configuration a
 every node have multiple pods associated with it
 worker node do the actual work
 Every node is unique is ip adddress . in the kubernetes when we deployed the pod in the cluster we get pod ip address
+
+
+
+https://www.salesforceben.com/wp-content/uploads/2021/06/workflow3-768x476.png
+
+At the start of the sprint, you create a release branch from the master/main branch.
+Feature branches are created by each member of your team as they begin work on each user story.
+You then build your changes in individual dev sandboxes (and/or IDE) and periodically commit them to the feature branch.
+When your feature is ready for QA, you open a pull request and merge the feature branch into the QA integration branch.
+After merging any change to QA integration, your branch gets deployed to the QA sandbox, where it can be tested and signed off by your QA team.
+Once this is complete, a PR is opened to merge the feature branch into the Stage integration branch.
+After merging any change to Stage integration, the branch is deployed to the Stage sandbox, where it can be tested and signed off for final release to production. Depending on your workflow, you might also have UAT by end users in there for good measure.
+Once the change is approved in Stage, the feature branch is merged into the release branch. This process then repeats itself for every change made during the sprint, with each approved feature collected in the release branch.
+At the end of the sprint, all changes in the release branch are deployed to production and set live for your end users.
+Once you’ve verified the new work on production, you merge the release branch back into master, so that master is once again up to date with production.
+You’d then also want to merge master back into the integration branches, so that your branches stay in sync should any rogue changes have not followed this main process.
