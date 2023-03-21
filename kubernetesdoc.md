@@ -54,16 +54,32 @@ kube proxy . It is responsible for mantaining the entire network configuration a
 
 every node have multiple pods associated with it
 worker node do the actual work
-Every node is unique is ip adddress . in the kubernetes when we deployed the pod in the cluster we get pod ip address
+Every node is unique is ip adddress . In the kubernetes when we deployed the pod in the cluster we get pod ip address
 
+challenges of microservice arch:
+one microservice can talk to another serice inside the cluster it is insecure . soo developers have to add security logic in each microservice
+and also communication logic and retry logic added in each microservice . for each microservieces monitoring  have to add promothesis or new relic in microservice.all these non bussiness logic added in each microservice along with bussiness logic.
+
+solution is service mesh
 istio: istio is a service mesh. service mesh manages communication between micro services.
 service mesh with sidecar pattern
-  sidecar proxy handles these networking logic and act as a proxy and it is third-party application . cluster operations can configure it easily . developer can focus on the actual bussiness logic. control plane injects the side car proxy in every micro service. now the microservices can talk to each using proxy.
+  sidecar proxy handles these networking logic and act as a proxy and it is third-party application . cluster operations can configure it easily . developer can focus on the actual bussiness logic. control plane injects the side car evoy proxy in every micro service. now the microservices can talk to each using proxy.
   you dont have to adjust deployment and service k8s yamls
   istio configuration seperate from actual configuration.
+  istio is configured with k8s yams and uses CRD
   
   on of the most important feature in istio service mesh is traffic splitting. if there is any change in one of the service is like payment service and new version it will build , tested and then deploy to production . you cant be sure ther is a no bug . in this case you can send the traffic 10 percent for new versions.release new versions without worrying about breaking the application.
   
+ second feature is traffic routing -- which services can communicate 
+virtual service--- how you route traffic to a given destination
+
+proxies can communicating without connecting to istiod
+
+feature is service discovery:when new microservice is deployed is automatically created end points.istiod uses centeral registry in each microservice 
+istiod uses cerificate management :secure tls communication between services
+and finally provides metric for each micro service in envoy proxy
+
+istio gateway: its load balancer it accepting incoming traffic inside the cluster from micro services
 
 pod: pod contain one or more container most cases one container 
 if  the pod has one or more containers how we can communicate . as we know each pod has unique ipaddess , same cname communicate ipdress through different port number containers
