@@ -1297,8 +1297,26 @@ spec:
   
   Image scan will do check for vulnerabilities and check for misconfigurations
   
-  Second security is run container as non user
+  Second security is run container as non user or non privallege usert
+  disabling the root user access
   create a dedicate user and group in docker file
+  FROM ubuntu
+  RUN groupadd -r hanuman && useradd -r -g hanuman hanuman
+  
+  ###disabling the root user
+  RUN chsh -s /usr/sbin/nologin root
+  
+  ENV HOME /home/hanuman
+  
+  ENV DEBIAN_FRONTEND=noninteractive
+  
+  docker run -it -u hanuman imagename /bin/bash
+  docker run -it -u hanuman --security-opts=no-new-privileged imagename /bin/bash
+  docker run -it --security-opts=no-new-privileged imagename /bin/bash
+  
+  privileged (user mode effective is zero (by pass all kernal permission checks ) it is super user
+  unprivileged (full permisssion checking based on process cred
+  
   change to non root user with USER directive
   and security context in the pod manifest file allow privalledge escaulation false
   
