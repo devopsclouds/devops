@@ -102,18 +102,32 @@ on every change the entire application need to be tested
  
  mono repo vs poly repo
  
- ##istio
- istio: istio is a service mesh. service mesh manages communication between micro services.
+ challenges of microservice arch:
+one microservice can talk to another serice inside the cluster it is insecure . soo developers have to add security logic in each microservice
+and also communication logic and retry logic added in each microservice . for each microservieces monitoring  have to add promothesis or new relic in microservice.all these non bussiness logic added in each microservice along with bussiness logic.
+
+solution is service mesh
+istio: istio is a service mesh. service mesh manages communication between micro services.
 service mesh with sidecar pattern
-  sidecar proxy handles these networking logic and act as a proxy and it is third-party application . cluster operations can configure it easily . developer can focus on the actual bussiness logic. control plane injects the side car proxy in every micro service. now the microservices can talk to each using proxy.
+  sidecar proxy handles these networking logic and act as a proxy and it is third-party application . cluster operations can configure it easily . developer can focus on the actual bussiness logic. control plane injects the side car evoy proxy in every micro service. now the microservices can talk to each using proxy.
   you dont have to adjust deployment and service k8s yamls
   istio configuration seperate from actual configuration.
+  istio is configured with k8s yams and uses CRD
   
   on of the most important feature in istio service mesh is traffic splitting. if there is any change in one of the service is like payment service and new version it will build , tested and then deploy to production . you cant be sure ther is a no bug . in this case you can send the traffic 10 percent for new versions.release new versions without worrying about breaking the application.
   
+ second feature is traffic routing -- which services can communicate 
+virtual service--- how you route traffic to a given destination
 
-  
-  
+proxies can communicating without connecting to istiod
+
+feature is service discovery:when new microservice is deployed is automatically created end points.istiod uses centeral registry in each microservice 
+istiod uses cerificate management :secure tls communication between services
+and finally provides metric for each micro service in envoy proxy
+
+istio gateway: its load balancer it accepting incoming traffic inside the cluster from micro services
+
+
  
  mono repo has one repo that contains multiple services in git hub or git lab
  poly repo: each service has own repoistory
@@ -176,3 +190,205 @@ Once the change is approved in Stage, the feature branch is merged into the rele
 At the end of the sprint, all changes in the release branch are deployed to production and set live for your end users.
 Once you’ve verified the new work on production, you merge the release branch back into master, so that master is once again up to date with production.
 You’d then also want to merge master back into the integration branches, so that your branches stay in sync should any rogue changes have not followed this main process.
+
+
+
+## kubernetes security with best practices
+  
+  Image scanning
+  We are doing the image scaning by using synk.
+  scaning during build in ci/cd pipeline. scan image before pushing to the repositorie
+  scan in the repositories.
+  
+  Image scan will do check for vulnerabilities and check for misconfigurations
+  
+  Second security is run container as non user or non privallege usert
+  disabling the root user access
+  create a dedicate user and group in docker file
+  FROM ubuntu
+  RUN groupadd -r hanuman && useradd -r -g hanuman hanuman
+  
+  ###disabling the root user
+  RUN chsh -s /usr/sbin/nologin root
+  
+  ENV HOME /home/hanuman
+  
+  ENV DEBIAN_FRONTEND=noninteractive
+  
+  docker run -it -u hanuman imagename /bin/bash
+  docker run -it -u hanuman --security-opts=no-new-privileged imagename /bin/bash
+  docker run -it --security-opts=no-new-privileged imagename /bin/bash
+  
+  privileged (user mode effective is zero (by pass all kernal permission checks ) it is super user
+  unprivileged (full permisssion checking based on process cred
+  
+  change to non root user with USER directive
+  and security context in the pod manifest file allow privalledge escaulation false
+  
+Third security is Rb
+  restrict the namespace , create user , wha access  give to user  within namespace  then create users,role rolebinding in kubernetes
+suppose if u create the role verbs are get nd resources are pod only then user can only acess list the pods within that namespace
+if user restrict the namespace first u have to authencating creating key  and certificate by following below steps
+
+
+
+User certificate creation
+
+
+ Creating Users and Roles
+
+Generating private key for John (john.key)
+
+$ openssl genrsa -out john.key 2048
+Generating certificate signing request (john.csr)
+
+openssl req -new -key john.key -out john.csr -subj "/CN=john/O=finance"
+Copy kubernetes ca certificate and key from the master node kmaster
+
+If you used my vagrant provisioning scripts, the root password for all the nodes is "kubeadmin"
+
+lxc file pull kmaster/etc/kubernetes/pki/ca.key /kuber
+lxc file pull kmaster/etc/kubernetes/pki/ca.crt /kuber
+Sign the certificate using certificate authority
+
+openssl x509 -req -in john.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out john.crt -days 365
+
+ then craete the kubeconfig file and add user,namespace, context name in contexts and add key and cerificate in kubeconfig
+ 
+ sudo cp ~/.kube/config john.kubeconfig
+ cat john.crt | base64 -w0 
+ cat john.key | base64 -w0
+ 
+ example of kubeconfig
+  apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMvakNDQWVhZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJek1ETXhOREV5TkRBeE5Wb1hEVE16TURNeE1URXlOREF4TlZvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTnBxCmRwVFkrbkFrSnZmQjYvM1l5Y3JRZWY0T2kyK2l5TjMzbVZsSlJrNjFlcmpnSzhFTHJ6Yk9MTE5GV1hhN0lKRUgKeGswMlZUME1iTnNLZ1IyQXlNQjkxVHJHTFZtZVdoQ01YSkJMZ1pSOGExaThRd3dBUTBYRDlETCtKUk9IaS9LYwpxRUVFcG4wZDdtbXNWcFlVRkhYU1NDaVpETzF4dFFBQWdvYTNxd3Y0VXIwemhPVnE5QVkxNlRlWnZkZmtFUFpmCnEzczRURk9aVnNOTzRKZm5HUkRnZWRNT3FjclBOZjM1a0VKWXIvM2d0eUNsdE9SaWdqVU1TY0dhWXo2dCtBdksKVXNXNTNWTGtCMHdTWGE1a1lSTUF3L0t1Nnp2SzNaL3Fmb0JBa04vd2JSUXVPT3RMMDE4OGxCdzN5b2RNbFo3Two2enYvL1Q3dEFXRmRwZFRZdDZzQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZPMWZZS3dFYnJkQ2NITWhLRTRmNlNmbXJCSDFNQlVHQTFVZEVRUU8KTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBSkZKczNqekJJYUJreTN0dEVoYQplbGhnUjFUckJtaEtnaEI1K1NuUFB5OTdzZjg4b0dXemlIUWFyZmZrK1R5M1dQU1dOOGVtOUtPN1dPRVhQemhXCjRaTEN1QTMxY2NNbXRwWmtUWTZSWGNTWTNiUUZpQ0xTT0RqbUtXQXNZdWcvNEVzVFVucWtpMVBNajVXUDd2TmUKUHJsMVBUbWNSTFkxWlMyYlN6NlUwaTdhd3B3SjVmM1FmVTJQYlV1bFNGSDl0ZGEzZVVxK3JvMXRYcEtzS2xuOQpjMVQ0VEVWRlJBcWVubGRleml3TnA0V3Y4RE4zWlZmVlFiMzBTVnVkSk5COTQ0clc5VmdkVFdqdmpkb0lHV09xCkdidGhGT1QyMHlKTm9GZC91SUMydTNCM0NzekhuaXlqcmgxV3hqSG8rZDI3RzhnMFd5cmdZV3R0RXlkRHFSUCsKYnNRPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    server: https://10.127.157.157:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: john
+    namespace: finance
+  name: john-kubernetes
+current-context: john-kubernetes
+kind: Config
+preferences: {}
+users:
+- name:	john
+  user:
+    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN2VENDQWFVQ0ZHR0djRlUxNE1uWlhLdk9tYk16aXIzejdKUWJNQTBHQ1NxR1NJYjNEUUVCQ3dVQU1CVXgKRXpBUkJnTlZCQU1UQ210MVltVnlibVYwWlhNd0hoY05Nak13TXpFMU1EUTBOak15V2hjTk1qUXdNekUwTURRMApOak15V2pBaE1RMHdDd1lEVlFRRERBUnFiMmh1TVJBd0RnWURWUVFLREFkbWFXNWhibU5sTUlJQklqQU5CZ2txCmhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBeUI4WE5KejNjb0UxVmhzN2FkNER2akpIcEdHZHU0Y3cKUWFjaGt4QnhtVDdxZTlZNGNkQlNnT0grdXF5RFY3aDh1SS81aUIzZUpWcGlEaDJoWUkwcjByYUI3L1k2K2RrYgovUmRjV2diYzl4TTNVdEVseTFQVTRvZHNTNHkrZzVZaldTYVZLa0ZNTmJJMXFCalgwYVF0VWlmWkVsaHRkQ3dUCkpRNlIvRlpQeHBNbThmZnV0UmhQTHJOMlhDUkhFWVdtdDVleXQvWGo2Z1RvYng2SEszV1hLTU1UNW44OExOM0kKU0p6dVRhY0o5bElVL1BWcFJkSmJPaUd0eEszMXlxNllRbTdjcFJsa28reEhpb3FqblVBRThUam1SUVRaTWFSUAp2YWhUa0tOb1M1VUQ1OXY0cFU1Wmx5MkRvY2dWSnVaSUJibktzN3dlR0VyNk9nTGJiS05ZTXdJREFRQUJNQTBHCkNTcUdTSWIzRFFFQkN3VUFBNElCQVFDVmRaRjZ1Y09wMGFxRFFpRGFPM3NvbG1QS2prd2VmWjUxZzFrWkRhYk4KZnE2ZlZkRlhTQjZRMnI5OTZ4M0Q5NG8rcEkzZmhRdEdleWtHdU5qbFBhNkNnVzUxVlNEQUlYd2NaMWdOWmFRMApFY0VjMVc4Q2hTbjZ6WUtwZmNpZlphMjlvQWEzQWZLczlOSVZSWlV5cmVrbHl3TXBsM0QvMjF6b0FzeUw1c0RHClZZbGpTWHBtYTZiSEdhek5BVWVkdUxkNHhzSCtrZllpWnJQR1FyTS9WQyt6VkwxNHpPMEhjUE9LRWJVVnpIVnMKTzRzeVMvRXdtWHZiWTZNdUN4aTFUWGZpTWpDQjBZZjl1UFE0SmJBa01lSzFvdmRmc20wUmNjMVlaeWpkZFhDUwp2a3FhQUpSVzBQQTFsS0JTM2ZlT2NxOXJpYzN1R2IvOXdWcjhsYUdLTDd0VAotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg== 
+    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb2dJQkFBS0NBUUVBeUI4WE5KejNjb0UxVmhzN2FkNER2akpIcEdHZHU0Y3dRYWNoa3hCeG1UN3FlOVk0CmNkQlNnT0grdXF5RFY3aDh1SS81aUIzZUpWcGlEaDJoWUkwcjByYUI3L1k2K2RrYi9SZGNXZ2JjOXhNM1V0RWwKeTFQVTRvZHNTNHkrZzVZaldTYVZLa0ZNTmJJMXFCalgwYVF0VWlmWkVsaHRkQ3dUSlE2Ui9GWlB4cE1tOGZmdQp0UmhQTHJOMlhDUkhFWVdtdDVleXQvWGo2Z1RvYng2SEszV1hLTU1UNW44OExOM0lTSnp1VGFjSjlsSVUvUFZwClJkSmJPaUd0eEszMXlxNllRbTdjcFJsa28reEhpb3FqblVBRThUam1SUVRaTWFSUHZhaFRrS05vUzVVRDU5djQKcFU1Wmx5MkRvY2dWSnVaSUJibktzN3dlR0VyNk9nTGJiS05ZTXdJREFRQUJBb0lCQUZRL2NuOTl6Vlp4T3NrRApNZUlCeTBXWTJUeEV0Q2lzWXc1Z2srdmJzbGMzZTNPaTNhUmNkVDg0NVFvbGNpM054d1BUNk5MNjcvaDlzbVlLCjUxTkVXenljQk52R3AxRmpxenJEU09mRmwrU1VQR2dyRUdRbTZLcHRKSlF4cmtxclBEcGQyZEl1SnkwNzF3YnIKWG9BdFE3OGdjMndidWdoOFBac09KVHM4QXQydmVrM1VPdlAreE1PZmhPUnp6cVJvQXlBWVFDZGdaQTlCZlBFMwozRXhiOHBpZXFHYzZ0c2thamowbkV0SXZuWTlGSGdVUTZkbFZZU2J2VnBqa2RXM1dUWGxVNXJ6bDl0bDRKTGhMCm9qWFZYekZoQTliQXEwOEhPVUtoTWdVdVZ3bHBhQ2FwN25wK1gxbU15enVmQktsc015ZTFVVkswR281QVI3dnoKbTdxZ3BIRUNnWUVBODhoQzR3Z2Rxb0VCNXh1dWdLMjl4eHhwQlpMZzRRUjZmUWY2L0sxSlMzWDVJQW50MVdFYQpMMWJMWVJxbmV0bHFiVHFvMG5qTXV0RFpzY1BCWFVibGtKNjN5bHZPbnJTSUl5TXZDMkJmRW1WenBhWXRZU1V1CnNEYlF0NXcyNm0wUXA5NzdZeU5lbTBZZWhrMEprbm1OVDJQZGZ1RUc5TENQWFpCYTBuU1dUUDhDZ1lFQTBpYW8KcVJpd2FBdzBQSUVnVTRrbVBoQUdtOGRPWld2aDNFTkNoSklzK1RTTXFwa0xyU3JnaU51bUZ4dENYa0x3L3cwdwpPWXdpUE5qK0V3ekJDZGVtSEhJZ1NxRHA4VmlqeXVEbjRtRTMwdXJJWUpqY2lOaVJZZVlYNTV3cFJrcTliWDhmCjVEU3NoNkRvOElYRlNBTlE4dlJjME1TNGZZcVlORmxpQ2cvSVVNMENnWUIxUWhkQ0lxNDZUQkZCTzZSbENxemsKNy9wb0R1MFI3dGlIK1dXMVVoaVdMbW1sQ29HV2lEMVRGZGwvbkpXQVZzR0ZScGpibS9WRnlwMWJqd0FjUUxTOQpLa3JYRCsvRGtLeUcwaTZYdDBRamtoN2RSNkErUU9kREpTcWhsb2NublV4TW9zbWlOdW9UbjllZzI3OUY4Q2VUClQwTEQrN01mMFNrMFpQSDZscytRdXdLQmdFNkhsN3NvdUxNSTdIUTNwSWJTMTNHVnQ0SjY1ZmJNYTZoTmtndk0KTy9ZY0J2eXhHRVhyb2VCQ2hEeGFPV0RVRHc2Z05RY3NNSmNnVjBGeklLZTI2Q0gxRzlBSGRhUjBoVENJL3QzLwppa2JNNlhmL1oxblQ0Ky83ZGE5ZEVhZHN3b0NxWXBaNmdJWm1RT1d3ZDFwRHN2bzNDb0FSSXdmMnhJMjdZUUYxCmlGdDVBb0dBTUFnY05Ua0NIazFlR3JLR0hCcU8zNk1KN3VmWG8ybzVLMi9zYXRIaFAxQkhsV01QbVdSQXpvUWQKVFVZSDloMHRmaExtQk5QbkVLTDQ4ejZWayszazg2NFMwdG42b3FsVkJsdytHQWtpYThXNDFlVmtJTG56bS9VNgovVFJvS0hJbjgwWXViQWJ1VXFEbHZ5ZUpGWFJ4aXNUdzJ6Z0kxbThOaUpML2RyZk5INjQ9Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg== 
+
+ create a role : kubectl create role john-finance  --verb=get,list --resource=pods --namespace finance
+ 
+ roles are
+ 1.apigroups
+2.verbs-get,list etc
+3.resources-pods,deploy
+
+role has be applied to namespace
+note:clusterrole has be applied to cluster
+
+rolebinding - user to binding to that particular role
+
+kubectl create rolebinding john-finance-rolebinding1 --role=john-finance --user=john  --namespace finance
+
+
+then user get the access of namespace
+kubectl -n finance get pods
+not the entire cluster
+
+ 
+  4th security is Network policy : allow least access by applying rules
+  
+by default each pod has communicate with another pod
+  using network policy restrict the access from one pod to another pod
+  example:frontend pod can communicate with backend pod
+  not the data base pod
+  
+  # example:
+  
+    network policy
+  
+  test
+  We have deployed a new pod called secure-pod and a service called secure-service. Incoming or Outgoing connections to this pod are not working.
+Troubleshoot why this is happening.
+
+Make sure that incoming connection from the pod webapp-color are successful.
+
+Important: Don't delete any current objects deployed.
+  
+  kubectl exec -it webapp-color -- sh
+  nc -v -z -w 2 secure-service 80
+  
+  
+apiVersion: v1
+kind: List
+items:
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: "2023-02-07T10:29:32Z"
+    generation: 1
+    name: np
+    namespace: default
+    resourceVersion: "1930"
+    uid: 717f3df9-eedd-4b8b-b93e-2c1e8ec85f03
+  spec:
+    podSelector:
+      matchLabels:
+        run: secure-pod
+
+    policyTypes:
+    - Ingress
+    ingress:
+    - from:
+        
+        - podSelector:
+            matchLabels:
+              name: webapp-color
+              
+      ports:
+      - protocol: TCP          
+        port: 80
+
+  5. image pull secret from docker registry
+  login to docker hub 
+  docker login
+  then ur cred are stored in below file
+  cat /root/.docker/config.json
+  kubectl create secret generic my-registry --from-file=.dockerconfigjson=.docker/config.json --type=kubernetes.io/dockerconfigjson
+  apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      imagePullSecrets:
+      - name: my-registry
+
+      containers:
+      - image: docker89781/dotnetappgithub
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+        imagePullPolicy: Always
+status: {}
+
+  then u have to secret in magePullSecrets in pod spec
