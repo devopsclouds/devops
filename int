@@ -399,3 +399,8 @@ status: {}
   then u have to secret in imagePullSecrets in pod spec
   
   kube hunter . it will discover vulnerabilties and issue in kubernetes issues in the cluster. it will measure security issues in nodes in cluster and pod level
+
+
+Promothesis alert
+Alerting with Prometheus is separated into two parts. Alerting rules in Prometheus servers send alerts to an Alertmanager. The Alertmanager then manages those alerts, including silencing, inhibition, aggregation and sending out notifications via methods such as email, on-call notification systems, and chat platforms.
+
