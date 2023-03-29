@@ -408,3 +408,10 @@ What is Checkmarx in DevOps?
 Checkmarx's code scanner enhances the introduction of security to the DevOps methodology. It will scan code before it has been compiled so that security analysis is supported right from the start of the development lifecycles.
 
 
+To back up docker images, use the docker save command that will produce a tar archive that can be used later on to create a new docker image with the docker load command.
+
+
+velero
+
+
+To back up docker images, use the docker save command that will produce a tar archive that can be used later on to create a new docker image with the docker load command.
