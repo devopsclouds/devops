@@ -404,3 +404,7 @@ status: {}
 Promothesis alert
 Alerting with Prometheus is separated into two parts. Alerting rules in Prometheus servers send alerts to an Alertmanager. The Alertmanager then manages those alerts, including silencing, inhibition, aggregation and sending out notifications via methods such as email, on-call notification systems, and chat platforms.
 
+What is Checkmarx in DevOps?
+Checkmarx's code scanner enhances the introduction of security to the DevOps methodology. It will scan code before it has been compiled so that security analysis is supported right from the start of the development lifecycles.
+
+
