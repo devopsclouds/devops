@@ -415,3 +415,6 @@ velero
 
 
 To back up docker images, use the docker save command that will produce a tar archive that can be used later on to create a new docker image with the docker load command.
+
+
+The etcd server is the only stateful component of the Kubernetes cluster. Kubernetes stores all API objects and settings on the etcd server. Etcd backup is enough to restore the Kubernetes cluster’s state completely. Kubernetes disaster recovery plans often include backing up the etcd cluster and using infrastructure as code to create new cloud servers.
