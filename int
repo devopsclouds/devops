@@ -1,3 +1,8 @@
+method overloading
+Method overloading is a means by which you can call the same method in different ways, i.e. with different parameters based on the number of arguments or their different datatypes. 
+method overiding
+When we call displayInfo() using the d1 object (object of the subclass), the method inside the subclass Dog is called. The displayInfo() method of the subclass overrides the same method of the superclass. 
+
 pipepline workflow and stages.
 so when it comes to my pipeline we use git flow strategy here when developers be working on their features branches  and merges  it to the developer branch.
 
