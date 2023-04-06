@@ -1,10 +1,7 @@
 # kubernetes
 
 kubernetes is opn source container architecture engine manage containers for high avaiblity.
-cluster management
-scheduling
-service discovery monitoring
-secrets management
+features of kubernetes
 
 
 kubernetes is also called as k8s
@@ -414,23 +411,7 @@ kubernetes-dashboard   Active   26d
 
 Default - when u create resources it will be under in the default namespace
  
-kubectl get po -n kube-system
-NAME                               READY   STATUS    RESTARTS        AGE
-coredns-78fcd69978-pwhct           1/1     Running   6 (3h23m ago)   26d
-etcd-minikube                      1/1     Running   6 (3h23m ago)   26d
-kindnet-4cgzq                      1/1     Running   9 (3h22m ago)   26d
-kindnet-fqs52                      1/1     Running   2 (3h22m ago)   10d
-kindnet-q7lxj                      1/1     Running   9 (3h22m ago)   26d
-kindnet-qzbqz                      1/1     Running   8 (3h23m ago)   26d
-kube-apiserver-minikube            1/1     Running   7 (3h23m ago)   26d
-kube-controller-manager-minikube   1/1     Running   6 (3h23m ago)   26d
-kube-proxy-75x7x                   1/1     Running   6 (3h22m ago)   26d
-kube-proxy-8sx9f                   1/1     Running   6 (3h23m ago)   26d
-kube-proxy-q9mqm                   1/1     Running   2 (3h22m ago)   10d
-kube-proxy-rn6jb                   1/1     Running   6 (3h22m ago)   26d
-kube-scheduler-minikube            1/1     Running   6 (3h23m ago)   26d
-metrics-server-5d56ccdd76-ltdzt    1/1     Running   3 (3h23m ago)   10d
-storage-provisioner                1/1     Running   19 (131m ago)   26d
+
 
 
 kube-system ---when u install Kubernetes by Kubernetes components will be created it will be under in the kube-system namespace
@@ -545,6 +526,107 @@ open config.yaml
 edit maxPods: 10
 systemctl start kubelet
 
+configmap and secrets
+A Secret is an object that contains a small amount of sensitive data such as a password, a token, or a key. Such information might otherwise be put in a Pod specification or in a container image. Using a Secret means that you don't need to include confidential data in your application code.
+
+Because Secrets can be created independently of the Pods that use them, there is less risk of the Secret (and its data) being exposed during the workflow of creating, viewing, and editing Pods. Kubernetes, and applications that run in your cluster, can also take additional precautions with Secrets, such as avoiding writing secret data to nonvolatile storage.
+
+
+creation of secret - kubectl create secret generic secret-demo --from-literal=username=chintu
+
+ kubectl create secret generic secret-demo --from-file=filename
+ kubectl get secret
+ kubectl edit secret secretname -o yaml
+ the secrets call in you yaml file through env and volume
+ 
+ echo "chintu" | base64 -- use encrypted your secrets - Kubernetes Secrets are, by default, stored unencrypted in the API server's underlying data store (etcd). Anyone with API access can retrieve or modify a Secret, and so can anyone with access to etcd. Additionally, anyone who is authorized to create a Pod in a namespace can use that access to read any Secret in that namespace; this includes indirect access such as the ability to create a Deployment.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  containers:
+  - image: busybox
+    name: busybox
+    command: ["/bin/sh"]
+    args: ["-c", "sleep 600"]
+    volumeMounts:
+      - name: demo
+        mountPath: /data
+    envFrom:
+      - secretRef:
+          name: secret-demo
+  
+    
+  volumes:
+    - name: demo
+      secret:
+        secretName: secret-demo
+
+if you changes in secrets no need to do deployment again
+
+config map
+config map:A ConfigMap is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.
+
+A ConfigMap allows you to decouple environment-specific configuration from your container images, so that your applications are easily portable.
+
+Caution: ConfigMap does not provide secrecy or encryption. If the data you want to store are confidential, use a Secret rather than a ConfigMap, or use additional (third party) tools to keep your data private.
+
+
+kubectl create congigmap config-demo --from-literal=channel.name=chintu
+
+kubectl create cm  config-demo1 --from-literal=channel.name1=mouni
+
+using env in pod spec it will inject cm values in pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  containers:
+  - image: busybox
+    name: busybox
+    command: ["/bin/sh"]
+    args: ["-c", "sleep 600"]
+    env:
+    - name: CHANNELNAME
+      valueFrom:
+        configMapKeyRef:
+          name: config-demo
+          key: channel.name
+    - name: challename1
+      valueFrom:
+        configMapKeyRef:
+          name: config-demo1
+          key: channel.name1
+
+using volumes
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  volumes:
+  - name: demo
+    configMap:
+      name: config-demo
+  - name: demo1 
+    configMap:
+      name: config-demo1
+  containers:
+  - image: busybox
+    name: busybox
+    command: ["/bin/sh"]
+    args: ["-c", "sleep 600"]
+    volumeMounts:
+    - name: demo
+      mountPath: /mydata
+    - name: demo1 
+      mountPath: /mydata1
+kubectl edit configmap config-demo -o yaml
+
+kubectl get configmap or cm
 
 RESOURCES QUOTA AND LIMITS
 
