@@ -869,8 +869,67 @@ spec:
   targetCPUUtilizationPercentage: 20
   terminationGracePeriodSeconds: 30
 
+# vertical pod autoscaller
+Vertical Pod autoscaling lets you analyze and set CPU and memory resources required by Pods. Instead of having to set up-to-date CPU requests and limits and memory requests and limits for the containers in your Pods, you can configure vertical Pod autoscaling to provide recommended values for CPU and memory requests and limits that you can use to manually update your Pods, or you can configure vertical Pod autoscaling to automatically update the values.
+
+Vertical Pod autoscaling is enabled by default in Autopilot clusters.
+
+Vertical Pod autoscaling in Auto mode
+Due to Kubernetes limitations, the only way to modify the resource requests of a running Pod is to recreate the Pod. If you create a VerticalPodAutoscaler object with an updateMode of Auto, the VerticalPodAutoscaler evicts a Pod if it needs to change the Pod's resource requests.
+
+To limit the amount of Pod restarts, use a Pod disruption budget. To ensure that your cluster can handle the new sizes of your workloads, use cluster autoscaler and node auto-provisioning.
+
+Vertical Pod autoscaling notifies the cluster autoscaler ahead of the update, and provides the resources needed for the resized workload before recreating the the workload, to minimize the disruption time.
 
 
+Vertical Pod autoscaling in Off mode
+It will give recommendtaions of the pod how much requests should be used
+
+vertical set up in kubernetes cluster:
+ git clone https://github.com/kubernetes/autoscaler.git
+cd autoscaler/vertical-pod-autoscaler/hack
+./vpa-up.sh
+vertical-deploy:
+piVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kubernetes.io/change-cause: "1.12"      
+  labels:
+    run: nginx
+  name: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  
+  template:
+    metadata:
+      labels:
+        run: nginx
+    spec:
+      containers:
+      - image: nginx:1.12
+        name: nginix
+        resources:
+                
+                requests:
+                        cpu: "50m"
+                        memory: "50Mi"
+                        
+vertical-auto
+apiVersion: autoscaling.k8s.io/v1beta2
+kind: VerticalPodAutoscaler
+metadata:
+  name: my-app-vpa
+spec:
+  targetRef:
+    apiVersion: "extensions/v1beta1"
+    kind:       Deployment
+    name:       my-app
+  updatePolicy:
+    updateMode: "Auto"
 
 RESOURCES QUOTA AND LIMITS
 
@@ -924,31 +983,6 @@ cpu	Same as requests.cpu
 memory	Same as requests.memory
 
 
-important commands
-kubectl create -g ng1.yaml
-  160  kubectl create -f ng1.yaml
-  161  kubectl get po -l app=httpd
-  162  kubectl get deployment -l app=httpd
-  163  kubectl get rc  -l app=httpd
-  164  kubectl get
-  165  kubectl get rc
-  166  kubectl get rs
-  167  kubectl get rs -l app=httpd
-  168  kubectl decribe deploy httpd-deploy
-  169  kubectl describe deploy httpd-delpoy
-  170  kubectl decribe deploy httpd-deploy
-  171  kubectl describe deploy httpd-deploy
-  172  kubectl set image deploy httpd-deploy httpd-container=httpd:2.4.43
-  173  kubectl decribe deploy httpd-deploy
-  174  kubectl describe deploy httpd-deploy
-  175  cat ng1.yaml
-  176  kubectl edit deploy httpd-deploy
-  177  kubectl rollout status deploy/httpd-deploy
-  178  cat ng1.yaml
-  179  kubectl rollout history deploy/httpd-deploy
-  180  kubectl rollout undo  deploy/httpd-deploy
-  181  kubectl describe deploy httpd-deploy
-kubectl scale deploy httpd-deploy --replicas=5
 
 
 
