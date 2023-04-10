@@ -110,12 +110,7 @@ spec:
   - name: ngnix-container
     image: ngnix
 
-important commands
-kubectl create -f yaml file
-kubectl delete -f yaml file
-kubectl get pods 
-kubectl get pods -o wide
-kubectl describe pod podname
+
 
 Repplication controller:
 Ensure that specified pods are running at any time
@@ -184,34 +179,7 @@ spec:
 
 
 
-important commands
-kubectl exec -it httpd-pod -- /bin/bash
-  127  docker images
-  128  cd /opt
-  129  vi ng.yaml
-  130  kubectl delete -f ng.yaml
-  131  kubectl create -f ng.yaml
-  132  vi ng.yaml
-  133  kubectl create -f ng.yaml
-  134  kubectl get pods
-  135  kubectl get pods -o wide
-  136  kubectl delete -f ng.yaml
-  137  vi ng.yaml
-  138  kubectl create -f ng.yaml
-  139  kubectl get pods -o wide
-  140  cat ng.yaml
-  141  kubectl get -l pods
-  142  kubectl get pods -l
-  143  kubectl get pods app=httpd
-  144  kubectl get po -l  app=httpd
-  145  kubectl describe rc httpd-rc
-  146  kubectl get po -l app=httpd
-  147  kubectl describe rc httpd-rc
-  148  kubectl get pods -o wide
-  149  kubectl get nodes
-  150  kubectl scale rc httpd-rc --replicas=5
-  151  kubectl get rc
-  152  kubectl get pods
+
 
 Replicaset or controller does not there updgrade or roll back
 
@@ -372,6 +340,99 @@ for 2 deployments using the same load balancer service but differnet selectors w
 
 Blue/Green deployments are very powerful when it comes to easy rollbacks, but they are not the only approach for updating your Kubernetes application.
 
+blue deploy yaml:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-1.10
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+            app: blue
+  template:
+    metadata:
+      labels:
+              app: blue
+    spec:
+      volumes:
+      - name: webdata
+        emptyDir: {}
+      initContainers:
+      - name: web-content
+        image: busybox
+        volumeMounts:
+        - name: webdata
+          mountPath: "/webdata"
+        command: ["/bin/sh", "-c", 'echo "<h1>I am <font color=blue>BLUE</font></h1>" > /webdata/index.html']
+      
+      containers: 
+      - name: nginx
+        image: nginx:1.10
+        ports:
+        - name: http
+          containerPort: 80
+        volumeMounts:
+        - name: webdata
+          mountPath: "/usr/share/nginx/html"
+          
+ canary deploy yaml:
+ apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-1.11
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+            app: green
+  template:
+    metadata:
+      labels:
+              app: green
+    spec:
+      volumes:
+      - name: webdata
+        emptyDir: {}
+      initContainers:
+      - name: web-content
+        image: busybox
+        volumeMounts:
+        - name: webdata
+          mountPath: "/webdata"
+        command: ["/bin/sh", "-c", 'echo "<h1>I am <font color=green>GREEN</font></h1>" > /webdata/index.html']
+      
+      containers: 
+      - name: nginx
+        image: nginx:1.11
+        ports:
+        - name: http
+          containerPort: 80
+        volumeMounts:
+        - name: webdata
+          mountPath: "/usr/share/nginx/html"
+  
+  loadbalancer-bluegreen
+apiVersion: v1
+kind: Service
+metadata: 
+  name: nginx
+  labels: 
+        app: blue-green
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector: 
+         app: green
+         #app: blue
+  type: LoadBalancer
+  
+  
+  
+ 
+
 canary deployment
 
 Another deployment strategy is using Canaries (a.k.a. incremental rollouts). With canaries, the new version of the application is gradually deployed to the Kubernetes cluster while getting a very small amount of live traffic (i.e. a subset of live users are connecting to the new version while the rest are still using the previous version).
@@ -383,6 +444,94 @@ The small subset of live traffic to the new version acts as an early warning for
 The big advantage of using canaries is that deployment issues can be detected very early while they still affect only a small subset of all application users. If something goes wrong with a canary, the production version is still present and all traffic can simply be reverted to it.
 
 While a canary is active, you can use it for additional verification (for example running smoke tests) to further increase your confidence on the stability of each new version.
+deploy version1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-deploy-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+            app: canary-deploy
+  template:
+    metadata:
+      labels:
+              app: canary-deploy
+    spec:
+      volumes:
+      - name: webdata
+        emptyDir: {}
+      initContainers:
+      - name: web-content
+        image: busybox
+        volumeMounts:
+        - name: webdata
+          mountPath: "/webdata"
+        command: ["/bin/sh", "-c", 'echo "<h1>canary version 1</h1>" > /webdata/index.html']
+      
+      containers: 
+      - name: nginx
+        image: nginx:1.11
+        ports:
+        - name: http
+          containerPort: 80
+        volumeMounts:
+        - name: webdata
+          mountPath: "/usr/share/nginx/html"
+deploy version 2
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-deploy-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+            app: canary-deploy
+  template:
+    metadata:
+      labels:
+              app: canary-deploy
+    spec:
+      volumes:
+      - name: webdata
+        emptyDir: {}
+      initContainers:
+      - name: web-content
+        image: busybox
+        volumeMounts:
+        - name: webdata
+          mountPath: "/webdata"
+        command: ["/bin/sh", "-c", 'echo "<h1>canary version2</font></h1>" > /webdata/index.html']
+      
+      containers: 
+      - name: nginx
+        image: nginx:1.10
+        ports:
+        - name: http
+          containerPort: 80
+        volumeMounts:
+        - name: webdata
+          mountPath: "/usr/share/nginx/html"
+
+loadbalancer of canary
+apiVersion: v1
+kind: Service
+metadata: 
+  name: nginx
+  labels: 
+        app: canary
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector: 
+         
+          app: canary-deploy
+  type: LoadBalancer
+
 
 kubectl scale deploy deploy-1 --replicas=5
 kubectl scale deploy deploy-2 --replicas=1
@@ -398,21 +547,9 @@ Suppose u have creating more resources in the single cluster from different team
 
 Note : when u deploy the resource with namespace and u cannot deploy the same resource with that same namespace
 
-Kubectl get ns
-
-kubectl get ns       
-NAME                   STATUS   AGE
-default                Active   26d
-kube-node-lease        Active   26d
-kube-public            Active   26d
-kube-system            Active   26d
-kubernetes-dashboard   Active   26d
-
 
 Default - when u create resources it will be under in the default namespace
  
-
-
 
 kube-system ---when u install Kubernetes by Kubernetes components will be created it will be under in the kube-system namespace
 Create the namespace ---- kubectl create namespace dev
@@ -627,6 +764,113 @@ spec:
 kubectl edit configmap config-demo -o yaml
 
 kubectl get configmap or cm
+
+# HOrizonatl autoscaling
+kubernetes horizontal autoscaller
+
+In Kubernetes, a HorizontalPodAutoscaler automatically updates a workload resource (such as a Deployment or StatefulSet), with the aim of automatically scaling the workload to match demand.
+
+Horizontal scaling means that the response to increased load is to deploy more Pods. This is different from vertical scaling, which for Kubernetes would mean assigning more resources (for example: memory or CPU) to the Pods that are already running for the workload.
+
+If the load decreases, and the number of Pods is above the configured minimum, the HorizontalPodAutoscaler instructs the workload resource (the Deployment, StatefulSet, or other similar resource) to scale back down.
+
+
+metric server - metric server collect the metrics in your pod like cpu , memory 
+every 15 seconds it will keep checking the metrics
+
+we have to instal metrics server in kubernetes cluster
+
+3 minutes to scale up the pods, when the cpu or memory limit exceeds
+
+ 5 minutes to scale down the pods
+
+kubernetes horizontal autoscaller
+
+In Kubernetes, a HorizontalPodAutoscaler automatically updates a workload resource (such as a Deployment or StatefulSet), with the aim of automatically scaling the workload to match demand.
+
+Horizontal scaling means that the response to increased load is to deploy more Pods. This is different from vertical scaling, which for Kubernetes would mean assigning more resources (for example: memory or CPU) to the Pods that are already running for the workload.
+
+If the load decreases, and the number of Pods is above the configured minimum, the HorizontalPodAutoscaler instructs the workload resource (the Deployment, StatefulSet, or other similar resource) to scale back down.
+
+
+metric server - metric server collect the metrics in your pod like cpu , memory 
+every 15 seconds it will keep checking the metrics
+
+we have to instal metrics server in kubernetes cluster
+
+3 minutes to scale up the pods, when the cpu or memory limit exceeds
+
+ 5 minutes to scale down the pods
+ 
+ hpa-deploy
+ apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+  creationTimestamp: "2023-04-10T09:49:54Z"
+  generation: 3
+  labels:
+    app: nginx
+  name: nginx
+  namespace: default
+  resourceVersion: "347328"
+  uid: f84fd1c1-2f52-412a-93b3-7ef93888e9d0
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 4
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: nginx
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+          requests:
+            cpu: 100m
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      
+
+10-hpa-cpu      
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx
+spec:
+  maxReplicas: 5
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx
+  targetCPUUtilizationPercentage: 20
+  terminationGracePeriodSeconds: 30
+
+
+
 
 RESOURCES QUOTA AND LIMITS
 
@@ -1537,7 +1781,8 @@ items:
   then ur cred are stored in below file
   cat /root/.docker/config.json
   kubectl create secret generic my-registry --from-file=.dockerconfigjson=.docker/config.json --type=kubernetes.io/dockerconfigjson
-  apiVersion: apps/v1
+
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   creationTimestamp: null
