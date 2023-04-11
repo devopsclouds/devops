@@ -642,8 +642,89 @@ Add this line
 Annotations:
      Scheduler.alpha.kubernetes.io/node-selector: "env=Develop"
 
+# Taint and Toleration
+kubectl taint nodes kworker2 key1=value1:NoSchedule : if you apply taint command of no schedule of that particular node then no pod will schedule on that node .i want schedule only specific  pod on that tainted node only then u need to use toleration
+places a taint on node node1. The taint has key key1, value value1, and taint effect NoSchedule. This means that no pod will be able to schedule onto node1 unless it has a matching toleration.
 
-SET LIMIT NUMBER OF PODS
+To remove the taint added by the command above, you can run:
+
+kubectl taint nodes node1 key1=value1:NoSchedule-
+You specify a toleration for a pod in the PodSpec. Both of the following tolerations "match" the taint created by the kubectl taint line above, and thus a pod with either toleration would be able to schedule onto node1:
+
+tolerations:
+- key: "key1"
+  operator: "Equal"
+  value: "value1"
+  effect: "NoSchedule"
+tolerations:
+- key: "key1"
+  operator: "Exists"
+  effect: "NoSchedule"
+Here's an example of a pod that uses tolerations:
+
+pods/pod-with-toleration.yaml Copy pods/pod-with-toleration.yaml to clipboard
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: "2023-04-11T15:13:50Z"
+  generation: 1
+  labels:
+    app: taint-tolerations
+  name: taint-tolerations
+  namespace: default
+  resourceVersion: "382325"
+  uid: e1272e67-6152-467c-a432-69d16c04fc36
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: taint-tolerations
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: taint-tolerations
+    spec:
+      tolerations:
+        - key: "key1"
+          operator: "Equal"
+          value: "value1"
+          effect: "NoSchedule"
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: nginx
+      
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status: {}
+
+
+The default value for operator is Equal.
+
+A toleration "matches" a taint if the keys are the same and the effects are the same, and:
+
+the operator is Exists (in which case no value should be specified), or
+the operator is Equal and the values are equal.
+
+
+# SET LIMIT NUMBER OF PODS
 
 mark nodes is unscheduled or disabled
 kubcectl cordon nodename
