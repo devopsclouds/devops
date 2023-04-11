@@ -540,7 +540,7 @@ kubectl scale deploy deploy-2 --replicas=1
 
 
 
-Namespace
+# Namespace
 In Kubernetes, namespaces provides a mechanism for isolating groups of resources within a single cluster. Names of resources need to be unique within a namespace, but not across namespaces. Namespace-based scoping is applicable only for namespace objects (e.g. Deployments, Services, etc) and not for cluster-wide objects (e.g. StorageClass, Nodes, PersistentVolumes, etc).
 
 Suppose u have creating more resources in the single cluster from different teams or different environments like dev sit etc . Then u can create namespaces for different env or teams
@@ -566,7 +566,8 @@ Edit the resource yaml file under the metadata
 Namespace: dev
 
 
-Context : A kubernetes context is just a set of access parameters that contains a Kubernetes cluster, a user, and a namespace. kubernetes Context is essentially the configuration that you use to access a particular cluster & namespace with a user account.
+# Context : 
+A kubernetes context is just a set of access parameters that contains a Kubernetes cluster, a user, and a namespace. kubernetes Context is essentially the configuration that you use to access a particular cluster & namespace with a user account.
 
 
 
@@ -599,37 +600,11 @@ Then the default namespace is dev . When u create resource by default it will go
 
 
 
-
+# NodeSelector
 How to schedule pod in the specific node. ---- if u apply the label in the specific node and then specify that label in the pod spec of yaml file
 
 Kubectl label node nodename  ram= slow 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: httpd-deploy
-  labels:
-    app: httpd-deploy
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: httpd
-  template:
-    metadata:
-      name: httpd-pod
-      labels:
-        app: httpd
-        tier: dev
-    spec:
-      nodeSelector:
-        ram: slow
-      containers:
-        
-        - image: sushanth53/ngnix_server
-          imagePullPolicy: Always
-          name: nginx-container
-          ports:
-          - containerPort: 80
+
 
 
 How to schedule the pod on node using admission control plugin through namespace
@@ -641,6 +616,42 @@ Edit the namespace dev and add annotation add label whatever u add the label to 
 Add this line 
 Annotations:
      Scheduler.alpha.kubernetes.io/node-selector: "env=Develop"
+
+# node affinity: u can use node affinity to schedule the pod on specific node
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      affinity:
+        nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                        nodeSelectorTerms:
+                        - matchExpressions:
+                          - key: ram
+                            operator: In
+                            values:
+                            - slow
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+~                
 
 # Taint and Toleration
 kubectl taint nodes kworker2 key1=value1:NoSchedule : if you apply taint command of no schedule of that particular node then no pod will schedule on that node .i want schedule only specific  pod on that tainted node only then u need to use toleration
@@ -722,6 +733,8 @@ A toleration "matches" a taint if the keys are the same and the effects are the 
 
 the operator is Exists (in which case no value should be specified), or
 the operator is Equal and the values are equal.
+
+# nodeAffinity
 
 
 # SET LIMIT NUMBER OF PODS
