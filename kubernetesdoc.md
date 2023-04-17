@@ -1,5 +1,6 @@
 # kubernetes
 
+
 kubernetes is opn source container architecture engine manage containers for high avaiblity.
 features of kubernetes
 
@@ -1772,9 +1773,15 @@ spec:
   
   ENV DEBIAN_FRONTEND=noninteractive
   
-  docker run -it -u hanuman imagename /bin/bash
-  docker run -it -u hanuman --security-opts=no-new-privileged imagename /bin/bash
-  docker run -it --security-opts=no-new-privileged imagename /bin/bash
+  docker build -t security:1.0 .
+  
+  
+  docker run -it -u hanuman --rm security:1.0 /bin/bash
+  docker run -it -u hanuman  --rm --security-opt=no-new-privileges security:1.0 /bin/bash
+  docker run --cap-drop all --cap-add NET_ADMIN -it -u hanuman  --rm security:1.0 /bin/bash
+  docker run -it  --read-only  --tmpfs /opt --rm security:1.0 /bin/bash
+  docker network create --driver bridge -o "com.docker.network.bridge.enable_icc"="false" test-network
+  docker run -it --network test-network  security:1.0 /bin/bash
   
   privileged (user mode effective is zero (by pass all kernal permission checks ) it is super user
   unprivileged (full permisssion checking based on process cred
