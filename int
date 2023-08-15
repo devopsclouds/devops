@@ -16,6 +16,8 @@ ui test is not like unit test . unit test executed in build pipeline
 
 ui test is executed in release pipleline . after the deploy the application in env . that url to perform ul test
 
+Integration testing is the phase in software testing in which the whole software module is tested or if it consists of multiple software modules they are combined and then tested as a group
+
 
 dotnet restore -- all the nuget packages are download onto the agent machine
 
