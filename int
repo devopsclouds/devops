@@ -11,7 +11,7 @@ Once you’ve verified the new work on production, you merge the release branch 
 You’d then also want to merge master back into the integration branches, so that your branches stay in sync should any rogue changes have not followed this main process.
 
 
-
+Unit testing is a software development process in which the smallest testable parts of an application, called units, are individually scrutinized for proper operation.
 ui test is not like unit test . unit test executed in build pipeline
 
 ui test is executed in release pipleline . after the deploy the application in env . that url to perform ul test
