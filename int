@@ -1,4 +1,22 @@
-Deadlock in Java
+ui test is not like unit test . unit test executed in build pipeline
+
+ui test is executed in release pipleline . after the deploy the application in env . that url to perform ul test
+
+
+dotnet restore -- all the nuget packages are download onto the agent machine
+
+
+
+
+
+dot net build - to build and create the package
+
+dotnet publish -- create the output directory and artifacts will be there
+
+
+in the build pipeline u should copy the chromedrive and msedge drive to outputdirectory
+
+######Deadlock in Java
 Deadlock in Java is a part of multithreading. Deadlock can occur in a situation when a thread is waiting for an object lock, that is acquired by another thread and second thread is waiting for an object lock that is acquired by first thread. Since, both threads are waiting for each other to release the lock, the condition is called deadlock.
 method overloading
 Method overloading is a means by which you can call the same method in different ways, i.e. with different parameters based on the number of arguments or their different datatypes. 
