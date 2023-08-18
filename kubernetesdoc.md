@@ -622,6 +622,9 @@ Annotations:
 Choose one of your nodes, and add a label to it:
 
 kubectl label nodes <your-node-name> disktype=ssd
+
+how the label is unlabeled -  k label node <nodename> disktype-
+
 where <your-node-name> is the name of your chosen node.
 
 Verify that your chosen node has a disktype=ssd label:
@@ -793,7 +796,17 @@ open config.yaml
 edit maxPods: 10
 systemctl start kubelet
 
-configmap and secrets
+# PDB
+Protecting an Application with a PodDisruptionBudget 
+Identify what application you want to protect with a PodDisruptionBudget (PDB).
+Think about how your application reacts to disruptions.
+Create a PDB definition ascommand
+k create deploy nginx --image=nginx --replicas=4
+k get po --show-labels
+k create pdb pdb1 --selector app=nginx --min-available=50%
+k drain nodename
+
+# configmap and secrets
 A Secret is an object that contains a small amount of sensitive data such as a password, a token, or a key. Such information might otherwise be put in a Pod specification or in a container image. Using a Secret means that you don't need to include confidential data in your application code.
 
 Because Secrets can be created independently of the Pods that use them, there is less risk of the Secret (and its data) being exposed during the workflow of creating, viewing, and editing Pods. Kubernetes, and applications that run in your cluster, can also take additional precautions with Secrets, such as avoiding writing secret data to nonvolatile storage.
