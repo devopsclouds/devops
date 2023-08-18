@@ -619,6 +619,17 @@ Annotations:
      Scheduler.alpha.kubernetes.io/node-selector: "env=Develop"
 
 # node affinity: u can use node affinity to schedule the pod on specific node
+Choose one of your nodes, and add a label to it:
+
+kubectl label nodes <your-node-name> disktype=ssd
+where <your-node-name> is the name of your chosen node.
+
+Verify that your chosen node has a disktype=ssd label:
+
+kubectl get nodes --show-labels
+Schedule a Pod using required node affinity
+This manifest describes a Pod that has a requiredDuringSchedulingIgnoredDuringExecution node affinity,disktype: ssd. This means that the pod will get scheduled only on a node that has a disktype=ssd label.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -643,16 +654,39 @@ spec:
                 requiredDuringSchedulingIgnoredDuringExecution:
                         nodeSelectorTerms:
                         - matchExpressions:
-                          - key: ram
+                          - key: disktype
                             operator: In
                             values:
-                            - slow
+                            - sdd
       containers:
       - image: nginx
         name: nginx
         resources: {}
 status: {}
-~                
+
+Schedule a Pod using preferred node affinity
+This manifest describes a Pod that has a preferredDuringSchedulingIgnoredDuringExecution node affinity,disktype: ssd. This means that the pod will prefer a node that has a disktype=ssd label.
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd          
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
 
 # Taint and Toleration
 kubectl taint nodes kworker2 key1=value1:NoSchedule : if you apply taint command of no schedule of that particular node then no pod will schedule on that node .i want schedule only specific  pod on that tainted node only then u need to use toleration
