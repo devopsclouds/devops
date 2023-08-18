@@ -806,6 +806,67 @@ k get po --show-labels
 k create pdb pdb1 --selector app=nginx --min-available=50%
 k drain nodename
 
+# liveness probe
+it will check the container is healthy or not. if the unhealthy the liveness probe will restarting the pod again
+intialDelaySeconds: 5  the livenessprobe will start initaly by 5 secors
+perioDseconds: it the container is unhealthy the liveness probe will restarting ever 3 seconds interval
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: live
+  name: live
+spec:
+  containers:
+  - image: nginx
+    name: live
+    resources: {}
+    args:
+      - /bin/sh
+      - -c
+      - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600
+    livenessProbe:
+      exec:
+        command:
+          - cat
+          - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 3
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+
+# Readinessprobe
+when the container is ready then its allowed to traffic
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: live
+  name: live
+spec:
+  containers:
+  - image: nginx
+    name: live
+    resources: {}
+    args:
+      - /bin/sh
+      - -c
+      - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600
+    readinessProbe:
+      exec:
+        command:
+          - cat
+          - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 3
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
 # configmap and secrets
 A Secret is an object that contains a small amount of sensitive data such as a password, a token, or a key. Such information might otherwise be put in a Pod specification or in a container image. Using a Secret means that you don't need to include confidential data in your application code.
 
