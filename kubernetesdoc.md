@@ -689,8 +689,9 @@ spec:
     imagePullPolicy: IfNotPresent
 
 # Taint and Toleration
-kubectl taint nodes kworker2 key1=value1:NoSchedule : if you apply taint command of no schedule of that particular node then no pod will schedule on that node .i want schedule only specific  pod on that tainted node only then u need to use toleration
+kubectl taint nodes kworker2 key1=value1:NoSchedule : if you apply taint command of no schedule of that particular node then no pod will schedule on that node .My one of the pod need to schedule to that node soo use toleration. we can specify the restrictions by using taints and toleration
 places a taint on node node1. The taint has key key1, value value1, and taint effect NoSchedule. This means that no pod will be able to schedule onto node1 unless it has a matching toleration.
+kubectl taint nodes node1 disk=sdd:NoSchedule
 
 To remove the taint added by the command above, you can run:
 
@@ -739,9 +740,9 @@ spec:
         app: taint-tolerations
     spec:
       tolerations:
-        - key: "key1"
+        - key: "disk"
           operator: "Equal"
-          value: "value1"
+          value: "sdd"
           effect: "NoSchedule"
       containers:
       - image: nginx
@@ -769,7 +770,7 @@ A toleration "matches" a taint if the keys are the same and the effects are the 
 the operator is Exists (in which case no value should be specified), or
 the operator is Equal and the values are equal.
 
-# nodeAffinity
+# nodeAffinity`
 
 
 # SET LIMIT NUMBER OF PODS
