@@ -1,0 +1,31 @@
+Iam Role
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1692785329144",
+            "Action": "s3:*",
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::myawsbucket8978"
+        }
+    ]
+}
+
+
+Bucket Role
+
+{
+    "Version": "2012-10-17",
+    "Id": "Policy1692787473932",
+    "Statement": [
+        {
+            "Sid": "Stmt1692787471598",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::984708707504:root"
+            },
+            "Action": "s3:PutObject",
+            "Resource": "arn:aws:s3:::myprivatebucket8978/*"
+        }
+    ]
+}
