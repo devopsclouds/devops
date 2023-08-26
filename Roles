@@ -1,3 +1,6 @@
+eksClusterRole=AmazonEKSClusterPolicy
+AmazonEKSNodeRole=AmazonEC2ContainerRegistryReadOnly,AmazonEKS_CNI_Policy,AmazonEKSWorkerNodePolicy
+
 Iam Role
 {
     "Version": "2012-10-17",
