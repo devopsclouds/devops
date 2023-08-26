@@ -1,3 +1,33 @@
+Pipeline process
+coming to pilelines we used classic editor and yaml code
+1. when the developer committed the code on feature branch it automatically trigger the pipleline 
+2. we set the trigger property in yaml code of  feature branch for automatically build
+3. we set the variables and variable group
+4. In the pipeline process we have stages , in the stages we have  multiple stages and each stage we have jobs  and jobs we have steps and steps we have scrtpt and task
+5.we set the build job is running on the build server agent that is self hosted agent and some of the builds are running on microsoft host agent
+6. In the build job if we using containerization for microservice application is building the docker image and create the package in docker image this one of the task in yaml
+    
+7.we push the docker image to Azure container registry
+8. And also we run the sonarqube anaylsis and code coverage in docker container and  and send the report to sonardashboard . we should install sonarscanner in docker
+9.we copies all the deployment yaml file to outputdirectory and release pipeline we use that yamls
+10. we deploy  the application in kubernetes cluster for multiple stages dev, testing, staging production.
+
+
+
+
+For Non containerization application
+In the build job if we using noncontainerization for microservice application is build and create the package in the build server and package will publish the artifact to output directory in release pipline will use package and will deploy in azure app service in the 
+rmultiple stages like dev,qa,stage and production
+
+
+
+
+
+
+
+
+
+Branching process
 At the start of the sprint, you create a release branch from the master/main branch.
 Feature branches are created by each member of your team as they begin work on each user story.
 You then build your changes in individual dev sandboxes (and/or IDE) and periodically commit them to the feature branch.
