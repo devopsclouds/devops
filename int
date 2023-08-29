@@ -122,7 +122,38 @@ Hard links cannot link across different file systems or partitions.
 In summary, symbolic links are separate files that point to the target's path and can link to various types of files and directories, whereas hard links are additional directory entries that reference the same data blocks as the original file and can only link to regular files.
 
 Consider using symbolic links when you want to create references across file systems or when linking to directories. Use hard links when you want multiple directory entries to point to the same data blocks, usually within the same file system.
+##python script for aws
+import boto3
 
+def lambda_handler(event, context):
+    # Configure the EC2 client
+    ec2_client = boto3.client('ec2')
+    
+    # Retrieve instance IDs from the event input
+    instance_ids = event.get('instance_ids', [])
+    
+    if not instance_ids:
+        return {
+            'statusCode': 400,
+            'body': 'No instance IDs provided in the input.'
+        }
+    
+    # Process the event action
+    action = event.get('action', '')
+    
+    if action == 'start':
+        ec2_client.start_instances(InstanceIds=instance_ids)
+        response = f'Started EC2 instances: {instance_ids}'
+    elif action == 'stop':
+        ec2_client.stop_instances(InstanceIds=instance_ids)
+        response = f'Stopped EC2 instances: {instance_ids}'
+    else:
+        response = 'Invalid action. Please provide "start" or "stop" as action.'
+    
+    return {
+        'statusCode': 200,
+        'body': response
+    }
 
 
 
