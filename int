@@ -1,4 +1,10 @@
-Pipeline process
+###import os
+os.system("du -sh "+Path)
+os.chdir(Path)
+
+
+
+###Pipeline process
 coming to pilelines we used classic editor and yaml code
 1. when the developer committed the code on feature branch it automatically trigger the pipleline 
 2. we set the trigger property in yaml code of  feature branch for automatically build
