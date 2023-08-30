@@ -3,8 +3,8 @@ os.system("du -sh "+Path)
 os.chdir(Path)
 
 
-pod issues
-rashLoopBackOff: A Pod enters the CrashLoopBackOff state when the container(s) within it repeatedly fail to start and exit immediately. This could be due to issues with the application code, configuration, or dependencies.
+## pod issues
+crashLoopBackOff: A Pod enters the CrashLoopBackOff state when the container(s) within it repeatedly fail to start and exit immediately. This could be due to issues with the application code, configuration, or dependencies.
 
 Pending: A Pod remains in the Pending state when it's created but cannot be scheduled to run on a node. This might be due to insufficient resources (CPU/memory) or scheduling constraints, such as node affinity or anti-affinity rules.
 
