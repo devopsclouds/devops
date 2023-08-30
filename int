@@ -3,6 +3,38 @@ os.system("du -sh "+Path)
 os.chdir(Path)
 
 
+pod issues
+rashLoopBackOff: A Pod enters the CrashLoopBackOff state when the container(s) within it repeatedly fail to start and exit immediately. This could be due to issues with the application code, configuration, or dependencies.
+
+Pending: A Pod remains in the Pending state when it's created but cannot be scheduled to run on a node. This might be due to insufficient resources (CPU/memory) or scheduling constraints, such as node affinity or anti-affinity rules.
+
+ImagePullBackOff: This occurs when Kubernetes is unable to pull the specified container image. This could be due to image not being available in the specified registry, authentication issues, or network problems.
+
+ContainerCreating: The ContainerCreating state indicates that the Pod is being initialized, and its containers are being created. It could take some time, but if it stays in this state for too long, it might indicate issues with resource constraints or misconfigured startup scripts.
+
+Terminating: A Pod in the Terminating state indicates that it's being deleted. If the deletion process is delayed due to, for example, a stuck termination process or finalizers not completing, the Pod could get stuck in this state.
+
+OOMKilled: When a container exceeds its memory limits, it might be "Out Of Memory" killed by the container runtime. This can lead to the termination and restarting of the container.
+
+Connection Errors: Pods might have connection issues if, for example, the application within the container is not binding to the correct port or there are network policy constraints preventing communication.
+
+Resource Constraints: If resource requests and limits are not configured properly, Pods might experience resource contention or be throttled.
+
+Configuration Issues: Misconfigured environment variables, config maps, secrets, or volume mounts can lead to application issues within the Pod.
+
+Init Containers: Issues might arise with init containers not completing successfully or not waiting for their dependent resources to be ready.
+
+Node Problems: Pods might experience issues if the node they are scheduled on has problems like disk pressure, network partitioning, or hardware failures.
+
+Network Issues: Network policies or misconfigured networking setups can lead to communication problems between Pods.
+
+
+
+
+
+
+
+
 
 ###Pipeline process
 coming to pilelines we used classic editor and yaml code
