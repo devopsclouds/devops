@@ -1,4 +1,4 @@
-# kubernetes
+# knubernetes
 
 
 kubernetes is opn source container architecture engine manage containers for high avaiblity.
@@ -668,7 +668,7 @@ spec:
 status: {}
 
 Schedule a Pod using preferred node affinity
-This manifest describes a Pod that has a preferredDuringSchedulingIgnoredDuringExecution node affinity,disktype: ssd. This means that the pod will prefer a node that has a disktype=ssd label.
+This manifest describes a Pod that has a preferredDuringSchedulingIgnoredDuringExecution node affinity,disktype: ssd. This means that the pod will prefer a node that has a disktype=ssd label. even it will not match the label it can schedule
 
 
 apiVersion: v1
@@ -690,6 +690,67 @@ spec:
   - name: nginx
     image: nginx
     imagePullPolicy: IfNotPresent
+
+###additional doc affinity and toplology
+. Node Affinity: Complete Deep DiveNode Affinity is the modern replacement for nodeSelector. It allows you to specify complex matching rules using logical operators (In, NotIn, Exists, DoesNotExist, Gt, Lt) to bind pods to specific servers.The Engine under the HoodWhen you write a Node Affinity rule, you are telling the Kubernetes scheduler's NodeAffinity plugin to filter out servers during the scheduling phase.requiredDuringSchedulingIgnoredDuringExecution (Hard Rule): The scheduler scans the labels of every node in the cluster. If a node lacks the exact labels requested, it is dropped from the list of candidates immediately.preferredDuringSchedulingIgnoredDuringExecution (Soft Rule): The scheduler assigns a score (0 to 100) to each eligible node based on your weight setting. The higher the weight, the higher the priority that node receives.Why "Ignored During Execution"?The second half of the name means that Kubernetes will not evict a running pod if the node labels change later. For example, if you schedule a pod onto a node labeled disktype=ssd, and a human administrator later changes that node's label to disktype=hdd, your pod will continue to run safely until it is manually restarted or deleted.Complete YAML Anatomy (Node Affinity)yamlspec:
+  affinity:
+    nodeAffinity:
+      # Hard Constraint: The pod will ONLY land on nodes matching these rules.
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: environment
+            operator: In       # Must be either 'production' or 'staging'
+            values: ["production", "staging"]
+          - key: hardware-generation
+            operator: Gt       # Greater than operator (e.g., generation > 3)
+            values: ["3"]
+      # Soft Constraint: The pod PREFERS these nodes, but will boot elsewhere if needed.
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 80             # Priority ranking (1 to 100)
+        preference:
+          matchExpressions:
+          - key: spot-instance
+            operator: NotIn    # Prefers on-demand instances over volatile spot instances
+            values: ["true"]
+Use code with caution.2. Pod Affinity & Pod Anti-Affinity: Complete Deep DivePod Affinity and Anti-Affinity shift the scheduling criteria from node capabilities to workload relationships.The Architecture Performance WarningUnlike Node Affinity (which evaluates a single node at a time), Pod Affinity requires the scheduler to cross-reference every single pod in the cluster against your labelSelector.In a cluster with 500 nodes and 5,000 pods, a strict podAffinity rule forces the master node to run thousands of loop checks per second.Production Rule: Never use wide-open labelSelector terms in massive clusters. Keep selectors tightly constrained by namespace.The Role of the Topology KeyThe topologyKey is the scope of the boundary.If topologyKey is kubernetes.io/hostname, Kubernetes treats individual machines as the boundary.If topologyKey is topology.kubernetes.io/zone, Kubernetes treats entire cloud availability zones (e.g., us-east-1a) as the boundary.Complete YAML Anatomy (Pod Affinity & Anti-Affinity)yamlspec:
+  affinity:
+    # 🤝 Pod Affinity: Force co-location
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: tier
+            operator: In
+            values: ["backend-api"]
+        topologyKey: kubernetes.io/hostname # Must be on the exact same server
+        namespaces: ["prod"]                # Keeps lookup performance fast by restricting search
+        
+    # 🛑 Pod Anti-Affinity: Force segregation
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: app
+              operator: In
+              values: ["payment-gateway"]
+          topologyKey: topology.kubernetes.io/zone # Tries to avoid putting two payment pods in the same building
+Use code with caution.3. Topology Spread Constraints: Complete Deep DiveWhile Anti-Affinity is a rigid binary ("yes" or "no"), Topology Spread Constraints use a specialized scheduling mathematical algorithm to enforce data center equilibrium.The Mathematical Engine: Calculating SkewKubernetes looks at your target topology (e.g., three separate zones: Zone A, Zone B, Zone C) and calculates the Skew for your deployment using this exact formula:\(\text{Skew}=\text{Pods\ on\ Current\ Topology}-\text{Pods\ on\ the\ Lowest\ Matching\ Topology}\)For example, if you have:Zone A: 3 podsZone B: 1 podZone C: 1 podThe lowest matching topology has 1 pod. Therefore, the Skew for Zone A is 3 - 1 = 2. If your maxSkew is set to 1, Kubernetes will block any further pods from landing in Zone A because a skew of 2 breaks your rule.Complete YAML Anatomy (Topology Spread Constraints)yamlspec:
+  topologySpreadConstraints:
+  - maxSkew: 1                        # Maximum allowable variance between domains
+    topologyKey: topology.kubernetes.io/zone # Balance across Availability Zones
+    whenUnsatisfiable: DoNotSchedule  # If balancing fails, freeze the pod (Hard Rule)
+    labelSelector:
+      matchExpressions:
+      - key: app
+        operator: In
+        values: ["microservice-auth"]
+
+
+    
+
 
 # Taint and Toleration
 kubectl taint nodes kworker2 key1=value1:NoSchedule : if you apply taint command of no schedule of that particular node then no pod will schedule on that node .My one of the pod need to schedule to that node soo use toleration. we can specify the restrictions by using taints and toleration
